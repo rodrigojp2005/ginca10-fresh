@@ -1,0 +1,419 @@
+/* Estilos do jogo extraídos do welcome.blade.php */
+.game-container {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 80px); /* Ajustado para dar menos espaço, aproveitando o footer menor */
+    overflow: hidden;
+    min-height: 500px; /* Altura mínima para dispositivos pequenos */
+}
+
+/* Estilos para banners de boas-vindas */
+.welcome-banner {
+    animation: slideInFromTop 0.6s ease-out;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos para ações de visitantes */
+.guest-actions {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.guest-message {
+    transition: all 0.3s ease;
+}
+
+.guest-message:hover {
+    background-color: #e5e7eb !important;
+    transform: translateY(-1px);
+}
+
+.street-view-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.map-slider {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 90%;
+    height: 100%;
+    background: white;
+    transition: right 0.3s ease-in-out;
+    z-index: 500 !important;
+    box-shadow: -2px 0 20px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+}
+
+.map-slider.active {
+    right: 0;
+}
+
+/* Header do slider com título e botão fechar */
+.map-slider-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.map-slider-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.close-btn {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.close-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.05);
+}
+
+.map-container {
+    flex: 1;
+    width: 100%;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    margin: 0;
+}
+
+/* Footer do slider com controles */
+.slider-controls {
+    background: #f8f9fa;
+    border-top: 2px solid #e9ecef;
+    padding: 16px 20px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+.slider-controls .btn {
+    margin: 0;
+    padding: 12px 24px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.slider-controls .btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.slider-controls .btn:disabled {
+    background-color: #6c757d !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Instruções de uso do mapa */
+.map-instructions {
+    background: #e3f2fd;
+    border: 1px solid #2196f3;
+    color: #1565c0;
+    padding: 12px 16px;
+    margin: 12px 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.map-instructions.hidden {
+    display: none;
+}
+
+.map-instructions-icon {
+    font-size: 16px;
+    animation: pulse 2s infinite;
+}
+
+/* Destaque para o botão de confirmar quando há palpite */
+.btn.btn-success.has-guess {
+    background: #28a745 !important;
+    animation: pulse-green 1.5s infinite;
+}
+
+@keyframes pulse-green {
+    0% { box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    50% { box-shadow: 0 0 20px rgba(40, 167, 69, 0.4); }
+    100% { box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+}
+.game-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10 !important; /* Z-index muito baixo para ficar atrás do menu */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+    .game-container {
+        height: calc(100vh - 100px); /* Ajustado para mobile com footer menor */
+        min-height: 400px;
+    }
+    
+    .game-controls {
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        transform: none;
+        padding: 0;
+    }
+    
+    .game-controls .btn {
+        flex: 1;
+        min-width: 100px;
+        text-align: center;
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    
+    /* Ajustar slider do mapa em mobile */
+    .map-slider {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .map-slider.active {
+        right: 0;
+    }
+    
+    .map-slider-header {
+        padding: 12px 16px;
+    }
+    
+    .map-slider-title {
+        font-size: 16px;
+    }
+    
+    .close-btn {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+    
+    .slider-controls {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .slider-controls .btn {
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 16px;
+    }
+}
+
+/* Garantir que footer não sobreponha o jogo */
+@media (max-width: 480px) {
+    .game-container {
+        height: calc(100vh - 120px); /* Ajustado para telas muito pequenas */
+        min-height: 350px;
+    }
+    
+    .map-slider-header {
+        padding: 10px 12px;
+    }
+    
+    .map-slider-title {
+        font-size: 14px;
+    }
+    
+    .slider-controls {
+        padding: 10px 12px;
+    }
+}
+
+.game-info {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255,255,255,0.95);
+    padding: 12px 16px;
+    border-radius: 8px;
+    z-index: 10 !important; /* Z-index muito baixo para ficar atrás do menu */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    gap: 15px;
+    font-size: 14px;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.game-info div {
+    white-space: nowrap;
+}
+
+/* Responsividade para game-info */
+@media (max-width: 768px) {
+    .game-info {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        padding: 10px 12px;
+        font-size: 13px;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    .game-info div {
+        flex: 1;
+        text-align: center;
+        min-width: 80px;
+    }
+}
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 2000;
+    display: none;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+.popup.active {
+    display: block;
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1999;
+    display: none;
+}
+.overlay.active {
+    display: block;
+}
+.btn {
+    background: #5a5ae2;
+    color: white;
+    border: black 1px solid;
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+}
+.btn:hover {
+    background: #0056b3;
+}
+.btn-success {
+    background: #28a745;
+}
+.btn-success:hover {
+    background: #1e7e34;
+}
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 50;
+}
+.help-emoji {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    cursor: pointer;
+    z-index: 200;
+    background: rgba(255,255,255,0.9);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+.help-emoji:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+@keyframes pulse {
+    0% { box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    50% { box-shadow: 0 4px 25px rgba(255,193,7,0.6); }
+    100% { box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+}
+
+/* Garantir que o mobile menu fique acima de todos os elementos do jogo */
+#mobile-menu {
+    z-index: 99999 !important; /* Z-index muito mais alto */
+}
+
+#mobile-menu-panel {
+    z-index: 100000 !important; /* Z-index máximo para o painel */
+}
+
+/* Forçar que elementos do jogo fiquem abaixo do menu mobile */
+.game-controls,
+.game-info,
+/*.map-slider,*/
+.btn {
+    z-index: 10 !important; /* Forçar para baixo quando mobile menu estiver aberto */
+}
