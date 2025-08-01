@@ -8,7 +8,11 @@ let locations = [];
 
 // Locais padrão caso não haja dados no backend
 const defaultLocations = [
-    { lat: -12.9714, lng: -38.5014, name: "Salvador, BA" }
+    { lat: -12.9714, lng: -38.5014, name: "Salvador, BA" },
+    { lat: -23.5505, lng: -46.6333, name: "São Paulo, SP" },
+    { lat: -22.9068, lng: -43.1729, name: "Rio de Janeiro, RJ" },
+    { lat: -15.7942, lng: -47.8822, name: "Brasília, DF" },
+    { lat: -8.0476, lng: -34.8770, name: "Recife, PE" }
 ];
 
 window.initGame = function() {
@@ -20,7 +24,7 @@ window.initGame = function() {
     console.log('Locais carregados:', locations);
     
     initializeMap();
-    initializeStreetView();
+    initializeStreetView(); // Agora vai usar os locais carregados
     setupEventListeners();
     startNewRound();
 }
@@ -62,11 +66,17 @@ function initializeMap() {
 }
 
 function initializeStreetView() {
+    // Obter uma posição aleatória dos locais disponíveis
+    let initialPosition = getRandomValidLocation();
+    
     streetView = new google.maps.StreetViewPanorama(
         document.getElementById('streetview'),
         {
-            position: { lat: -22.9068, lng: -43.1729 },
-            pov: { heading: 34, pitch: 10 },
+            position: initialPosition,
+            pov: { 
+                heading: Math.random() * 360, // Direção aleatória
+                pitch: Math.random() * 20 - 10 // Pitch entre -10 e 10 graus
+            },
             zoom: 1,
             disableDefaultUI: true,
             showRoadLabels: false
@@ -76,10 +86,35 @@ function initializeStreetView() {
     // Adicionar listener para detectar erros de Street View
     streetView.addListener('status_changed', function() {
         if (streetView.getStatus() !== 'OK') {
-            console.warn('Street View não disponível para esta localização');
-            // Tentar uma localização alternativa ou mostrar mensagem
+            console.warn('Street View não disponível para esta localização, tentando outra...');
+            // Tentar uma localização alternativa
+            const newPosition = getRandomValidLocation();
+            streetView.setPosition(newPosition);
         }
     });
+}
+
+// Função para obter uma localização válida aleatória
+function getRandomValidLocation() {
+    let validLocations = [];
+    
+    if (locations && locations.length > 0) {
+        // Filtrar apenas locais válidos (não o marcador no_gincana)
+        validLocations = locations.filter(loc => !loc.no_gincana);
+    }
+    
+    // Se não há locais válidos, usar os padrões
+    if (validLocations.length === 0) {
+        validLocations = defaultLocations;
+    }
+    
+    const randomLocation = validLocations[Math.floor(Math.random() * validLocations.length)];
+    console.log('Localização selecionada:', randomLocation.name || 'Local aleatório');
+    
+    return {
+        lat: randomLocation.lat,
+        lng: randomLocation.lng
+    };
 }
 
 function setupEventListeners() {
