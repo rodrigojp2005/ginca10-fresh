@@ -23,8 +23,27 @@ window.initGame = function() {
     
     console.log('Locais carregados:', locations);
     
+    // Verificar se é a primeira visita (ou forçar tutorial)
+    const showTutorial = !localStorage.getItem('gincaneiros_tutorial_seen') || window.location.search.includes('tutorial=1');
+    
+    if (showTutorial) {
+        // Marcar tutorial como visto
+        localStorage.setItem('gincaneiros_tutorial_seen', 'true');
+        
+        // Mostrar tutorial explicativo primeiro
+        showGameTutorial().then(() => {
+            initializeGameComponents();
+        });
+    } else {
+        // Ir direto para o jogo
+        initializeGameComponents();
+    }
+}
+
+// Função auxiliar para inicializar componentes do jogo
+function initializeGameComponents() {
     initializeMap();
-    initializeStreetView(); // Agora vai usar os locais carregados
+    initializeStreetView();
     setupEventListeners();
     startNewRound();
 }
@@ -511,4 +530,16 @@ function showNoGincanaAlert() {
             }
         });
     }
+}
+
+// Função para mostrar tutorial explicativo do jogo
+function showGameTutorial() {
+    return Swal.fire({
+        title: "Sweet!",
+        text: "Modal with a custom image.",
+        imageUrl: "https://unsplash.it/400/200",
+        imageWidth: 400,
+        imageHeight: 200,
+        imageAlt: "Custom image"
+    });
 }

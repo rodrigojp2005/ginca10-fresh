@@ -12,12 +12,13 @@
 <div class="game-container">
     <!-- Informações do jogo -->
     <div class="game-info">
-        <div><strong>Pontuação:</strong> <span id="score">1000</span></div>
-        <div><strong>Tentativas:</strong> <span id="attempts">5</span></div>
-        <div><strong>Rodada:</strong> <span id="round">1</span></div>
-        @auth
+       @auth
+            <div><strong>Pontuação:</strong> <span id="score">1000</span></div>
+            <div><strong>Tentativas:</strong> <span id="attempts">5</span></div>
+            <div><strong>Rodada:</strong> <span id="round">1</span></div> 
             <div><strong>Jogador:</strong> {{ auth()->user()->name }}</div>
         @else
+            <div><strong>Tentativas:</strong> <span id="attempts">5</span></div>
             <div><strong>Modo:</strong> Visitante</div>
         @endauth
     </div>

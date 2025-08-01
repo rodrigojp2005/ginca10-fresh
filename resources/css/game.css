@@ -417,3 +417,57 @@
 .btn {
     z-index: 10 !important; /* Forçar para baixo quando mobile menu estiver aberto */
 }
+
+/* Estilos para o tutorial do jogo */
+.tutorial-popup {
+    border-radius: 15px !important;
+    font-family: 'Instrument Sans', sans-serif !important;
+}
+
+.tutorial-btn {
+    border-radius: 25px !important;
+    padding: 12px 30px !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    transition: all 0.3s ease !important;
+}
+
+.tutorial-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3) !important;
+}
+
+/* Animações do SweetAlert (se animate.css estiver disponível) */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translate3d(0, -100%, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes fadeOutUp {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        transform: translate3d(0, -100%, 0);
+    }
+}
+
+.animate__animated {
+    animation-duration: 0.5s;
+    animation-fill-mode: both;
+}
+
+.animate__fadeInDown {
+    animation-name: fadeInDown;
+}
+
+.animate__fadeOutUp {
+    animation-name: fadeOutUp;
+}
