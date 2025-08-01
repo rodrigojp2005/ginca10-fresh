@@ -15,10 +15,6 @@
                 <p class="text-gray-600 mb-8">
                     Que tal criar sua primeira gincana personalizada?
                 </p>
-                <a href="{{ route('gincana.create') }}" 
-                   class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">
-                    🎮 Criar Gincana
-                </a>
             </div>
         </div>
     @else
@@ -71,7 +67,7 @@
     @endif
     
     <div style="width: 100%; display: flex; justify-content: center; margin-top: 32px;">
-        <a href="{{ route('gincana.create') }}" class="btn btn-primary" style="font-weight: 500; background: #198754; border: none; min-width: 220px; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none;">+ Criar Nova Gincana</a>
+        <a href="{{ route('gincana.create') }}" class="btn btn-primary" style="font-weight: 500; background: #198754; border: none; min-width: 220px; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none;">🎮 Criar Nova Gincana</a>
     </div>
 </div>
 @endsection
