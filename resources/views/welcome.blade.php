@@ -104,5 +104,7 @@
 <script>
     // Passar os locais do backend para o JavaScript
     window.gameLocations = @json($locations ?? []);
+    // Passar informação de autenticação para o JavaScript
+    window.isAuthenticated = @json(auth()->check());
 </script>
 @endsection

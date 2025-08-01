@@ -8,10 +8,6 @@ let locations = [];
 
 // Locais padrão caso não haja dados no backend
 const defaultLocations = [
-    { lat: -22.9068, lng: -43.1729, name: "Cristo Redentor, Rio de Janeiro" },
-    { lat: -22.9519, lng: -43.2105, name: "Copacabana, Rio de Janeiro" },
-    { lat: -23.5505, lng: -46.6333, name: "São Paulo, SP" },
-    { lat: -15.7942, lng: -47.8822, name: "Brasília, DF" },
     { lat: -12.9714, lng: -38.5014, name: "Salvador, BA" }
 ];
 
@@ -329,6 +325,16 @@ function updateUI() {
 // };
 
 window.addEventListener("load", () => {
+    // Verificar primeiro se há gincanas disponíveis
+    const gameLocations = window.gameLocations || [];
+    
+    if (gameLocations.length === 1 && gameLocations[0].no_gincana) {
+        // Se não há gincanas, mostrar alerta diretamente
+        showNoGincanaAlert();
+        return;
+    }
+    
+    // Se há gincanas, aguardar carregamento do Google Maps
     const waitForGoogle = setInterval(() => {
         if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
             clearInterval(waitForGoogle);
@@ -373,5 +379,77 @@ async function saveScoreToDatabase(pontuacao, location) {
         }
     } catch (error) {
         console.error('Erro na requisição para salvar pontuação:', error);
+    }
+}
+
+// Função para mostrar alerta quando não há gincanas disponíveis
+function showNoGincanaAlert() {
+    // Ocultar elementos do jogo
+    const gameContainer = document.querySelector('.game-container');
+    if (gameContainer) {
+        gameContainer.style.display = 'none';
+    }
+    
+    // Verificar se o usuário está autenticado
+    const isAuthenticated = window.isAuthenticated || false;
+    
+    if (isAuthenticated) {
+        // Usuário logado - mostrar opção de criar gincana
+        Swal.fire({
+            title: '🎯 Nenhuma Gincana Disponível',
+            text: 'Não há gincanas públicas criadas ainda. Que tal ser o primeiro a criar uma?',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '🎮 Criar Minha Gincana',
+            cancelButtonText: 'Cancelar',
+            background: '#fff',
+            allowOutsideClick: false,
+            backdrop: `
+                rgba(0,0,123,0.4)
+                left top
+                no-repeat
+            `
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirecionar para a página de criação de gincana
+                window.location.href = '/gincana/create';
+            } else {
+                // Se cancelar, mostrar container do jogo novamente
+                if (gameContainer) {
+                    gameContainer.style.display = 'block';
+                }
+            }
+        });
+    } else {
+        // Visitante - informar sobre login
+        Swal.fire({
+            title: '🎯 Nenhuma Gincana Disponível',
+            text: 'Não há gincanas públicas criadas ainda. Faça login para criar sua própria gincana!',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '🔐 Fazer Login',
+            cancelButtonText: 'Ok',
+            background: '#fff',
+            allowOutsideClick: false,
+            backdrop: `
+                rgba(0,0,123,0.4)
+                left top
+                no-repeat
+            `
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirecionar para a página de login
+                window.location.href = '/login';
+            } else {
+                // Se cancelar, mostrar container do jogo novamente
+                if (gameContainer) {
+                    gameContainer.style.display = 'block';
+                }
+            }
+        });
     }
 }

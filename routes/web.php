@@ -53,11 +53,10 @@ function getGameLocations() {
         ];
     }
     
-    // Se não houver gincanas criadas pelos usuários, usar locais padrão
+    // Se não houver gincanas criadas pelos usuários, retornar um marcador especial para exibir alerta no front-end
     if (empty($locations)) {
-        $locations = [
-            ['lat' => -22.9068, 'lng' => -43.1729, 'name' => 'Cristo Redentor, Rio de Janeiro'],
-            ['lat' => -22.9519, 'lng' => -43.2105, 'name' => 'Copacabana, Rio de Janeiro']
+        $locations[] = [
+            'no_gincana' => true
         ];
     }
     
