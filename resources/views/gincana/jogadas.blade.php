@@ -14,34 +14,6 @@
         </div>
 
         @if($gincanasJogadas->count() > 0)
-            <!-- Statistics Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white rounded-xl shadow-lg p-6 text-center">
-                    <div class="text-3xl font-bold text-blue-600">{{ $gincanasJogadas->count() }}</div>
-                    <div class="text-gray-600 mt-2">Gincanas Jogadas</div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-lg p-6 text-center">
-                    <div class="text-3xl font-bold text-green-600">
-                        {{ $gincanasJogadas->filter(function($gincana) {
-                            $participacao = $gincana->participacoes->first();
-                            return $participacao && $participacao->status === 'concluida';
-                        })->count() }}
-                    </div>
-                    <div class="text-gray-600 mt-2">Concluídas</div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-lg p-6 text-center">
-                    <div class="text-3xl font-bold text-orange-600">
-                        {{ $gincanasJogadas->filter(function($gincana) {
-                            $participacao = $gincana->participacoes->first();
-                            return $participacao && $participacao->status === 'em_progresso';
-                        })->count() }}
-                    </div>
-                    <div class="text-gray-600 mt-2">Em Progresso</div>
-                </div>
-            </div>
-
             <!-- Gincanas List -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($gincanasJogadas as $gincana)
