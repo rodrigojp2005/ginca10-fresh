@@ -6,7 +6,7 @@
             </div>
             <div class="flex items-center space-x-4 mt-2 md:mt-0">
                 <span class="text-sm text-gray-400">
-                    Feito com ❤️ para amantes de geografia
+                    Feito com ❤️ para amantes de desafios e gincanas
                 </span>
             </div>
         </div>
