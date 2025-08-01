@@ -5,6 +5,8 @@ use App\Http\Controllers\GincanaController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Models\GincanaLocal;
+use App\Models\Gincana;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,14 +26,40 @@ use Illuminate\Support\Facades\Auth;
 function getGameLocations() {
     $locations = [];
     
-    // Por enquanto, usar locais padrão até criar o modelo Gincana
-    $locations = [
-        ['lat' => -22.9068, 'lng' => -43.1729, 'name' => 'Cristo Redentor, Rio de Janeiro'],
-        ['lat' => -22.9519, 'lng' => -43.2105, 'name' => 'Copacabana, Rio de Janeiro'],
-        ['lat' => -23.5505, 'lng' => -46.6333, 'name' => 'São Paulo, SP'],
-        ['lat' => -15.7942, 'lng' => -47.8822, 'name' => 'Brasília, DF'],
-        ['lat' => -12.9714, 'lng' => -38.5014, 'name' => 'Salvador, BA']
-    ];
+    // 1. Buscar locais principais das gincanas públicas criadas pelos usuários
+    $gincanas = Gincana::where('privacidade', 'publica')->get();
+    foreach ($gincanas as $gincana) {
+        $locations[] = [
+            'lat' => (float) $gincana->latitude,
+            'lng' => (float) $gincana->longitude,
+            'name' => $gincana->nome,
+            'gincana_id' => $gincana->id,
+            'contexto' => $gincana->contexto
+        ];
+    }
+    
+    // 2. Buscar locais adicionais das gincanas públicas (tabela gincana_locais)
+    $locaisAdicionais = GincanaLocal::whereHas('gincana', function($query) {
+        $query->where('privacidade', 'publica');
+    })->with('gincana')->get();
+    
+    foreach ($locaisAdicionais as $local) {
+        $locations[] = [
+            'lat' => (float) $local->latitude,
+            'lng' => (float) $local->longitude,
+            'name' => $local->gincana->nome . ' - Local Adicional',
+            'gincana_id' => $local->gincana_id,
+            'contexto' => $local->gincana->contexto
+        ];
+    }
+    
+    // Se não houver gincanas criadas pelos usuários, usar locais padrão
+    if (empty($locations)) {
+        $locations = [
+            ['lat' => -22.9068, 'lng' => -43.1729, 'name' => 'Cristo Redentor, Rio de Janeiro'],
+            ['lat' => -22.9519, 'lng' => -43.2105, 'name' => 'Copacabana, Rio de Janeiro']
+        ];
+    }
     
     return $locations;
 }
