@@ -14,7 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Google Maps API -->
     <script async
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzEzusC_k3oEoPnqynq2N4a0aA3arzH-c">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzEzusC_k3oEoPnqynq2N4a0aA3arzH-c&libraries=geometry&loading=async">
     </script>
     <!-- Styles / Scripts -->
     @vite(['resources/css/app.css', 'resources/css/game.css', 'resources/js/app.js', 'resources/js/game.js'])

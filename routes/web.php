@@ -5,7 +5,6 @@ use App\Http\Controllers\GincanaController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\Auth\SocialiteController;
-use App\Models\GincanaLocal;
 use App\Models\Gincana;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -26,7 +25,7 @@ use Illuminate\Support\Facades\Auth;
 function getGameLocations() {
     $locations = [];
     
-    // 1. Buscar locais principais das gincanas públicas criadas pelos usuários
+    // Buscar apenas os locais principais das gincanas públicas criadas pelos usuários
     $gincanas = Gincana::where('privacidade', 'publica')->get();
     foreach ($gincanas as $gincana) {
         $locations[] = [
@@ -35,21 +34,6 @@ function getGameLocations() {
             'name' => $gincana->nome,
             'gincana_id' => $gincana->id,
             'contexto' => $gincana->contexto
-        ];
-    }
-    
-    // 2. Buscar locais adicionais das gincanas públicas (tabela gincana_locais)
-    $locaisAdicionais = GincanaLocal::whereHas('gincana', function($query) {
-        $query->where('privacidade', 'publica');
-    })->with('gincana')->get();
-    
-    foreach ($locaisAdicionais as $local) {
-        $locations[] = [
-            'lat' => (float) $local->latitude,
-            'lng' => (float) $local->longitude,
-            'name' => $local->gincana->nome . ' - Local Adicional',
-            'gincana_id' => $local->gincana_id,
-            'contexto' => $local->gincana->contexto
         ];
     }
     

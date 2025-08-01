@@ -72,6 +72,14 @@ function initializeStreetView() {
             showRoadLabels: false
         }
     );
+    
+    // Adicionar listener para detectar erros de Street View
+    streetView.addListener('status_changed', function() {
+        if (streetView.getStatus() !== 'OK') {
+            console.warn('Street View não disponível para esta localização');
+            // Tentar uma localização alternativa ou mostrar mensagem
+        }
+    });
 }
 
 function setupEventListeners() {
@@ -99,7 +107,11 @@ function startNewRound() {
     currentLocation = locations[Math.floor(Math.random() * locations.length)];
     console.log('Local atual:', currentLocation);
     
-    streetView.setPosition(currentLocation);
+    // Adicionar delay para evitar muitas requisições seguidas
+    setTimeout(() => {
+        streetView.setPosition(currentLocation);
+    }, 500); // Delay de 500ms
+    
     if (window.userMarker) {
         window.userMarker.setMap(null);
     }
@@ -338,6 +350,18 @@ window.addEventListener("load", () => {
     const waitForGoogle = setInterval(() => {
         if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
             clearInterval(waitForGoogle);
+            
+            // Adicionar tratamento de erro global para Google Maps
+            window.gm_authFailure = function() {
+                console.error('Falha na autenticação da Google Maps API');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro na API do Google Maps',
+                    text: 'Problema de autenticação ou limite de requisições. Tente novamente em alguns minutos.',
+                    confirmButtonColor: '#d33'
+                });
+            };
+            
             initGame();
         }
     }, 100);

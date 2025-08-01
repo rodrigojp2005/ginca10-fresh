@@ -24,10 +24,11 @@ class Gincana extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function locais()
-    {
-        return $this->hasMany(GincanaLocal::class);
-    }
+    // Relacionamento temporariamente desabilitado
+    // public function locais()
+    // {
+    //     return $this->hasMany(GincanaLocal::class);
+    // }
 
     public function participacoes()
     {
