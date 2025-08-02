@@ -8,11 +8,7 @@ let locations = [];
 
 // Locais padrão caso não haja dados no backend
 const defaultLocations = [
-    { lat: -12.9714, lng: -38.5014, name: "Salvador, BA" },
-    { lat: -23.5505, lng: -46.6333, name: "São Paulo, SP" },
-    { lat: -22.9068, lng: -43.1729, name: "Rio de Janeiro, RJ" },
-    { lat: -15.7942, lng: -47.8822, name: "Brasília, DF" },
-    { lat: -8.0476, lng: -34.8770, name: "Recife, PE" }
+    { lat: -12.9714, lng: -38.5014, name: "Salvador, BA" }
 ];
 
 window.initGame = function() {
@@ -102,6 +98,37 @@ function initializeStreetView() {
         }
     );
     
+    // Remove o marcador anterior se existir
+    if (window.characterMarker) {
+        window.characterMarker.setMap(null);
+    }
+
+    // Adiciona a figurinha como marcador no panorama (igual ao exemplo)
+    window.characterMarker = new google.maps.Marker({
+        position: initialPosition,
+        map: streetView,  // Usar streetView como no exemplo
+        icon: {
+            url: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTRweGJoMHk1eG5nb2tyOHMyMHp1ZGlpYTFoZDZ6Ym9zZ3ZkYXB2MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/bvQHYGOF8UOXqXSFir/giphy.gif",
+            scaledSize: new google.maps.Size(60, 80),
+            anchor: new google.maps.Point(30, 80) // Importante: anchor para posicionamento correto
+        },
+        visible: true
+    });
+
+    window.characterMarker.addListener('click', function() {
+        const message = currentLocation && currentLocation.contexto ? 
+            currentLocation.contexto :
+            'Procure no mapa e ajude a me encontrarem neste local desconhecido, buá, buá!';
+            
+        Swal.fire({
+            title: currentLocation && currentLocation.name ? currentLocation.name : 'Onde estou ...',
+            text: message,
+            icon: 'question',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#3085d6',
+        });
+    });
+    
     // Adicionar listener para detectar erros de Street View
     streetView.addListener('status_changed', function() {
         if (streetView.getStatus() !== 'OK') {
@@ -109,6 +136,11 @@ function initializeStreetView() {
             // Tentar uma localização alternativa
             const newPosition = getRandomValidLocation();
             streetView.setPosition(newPosition);
+            
+            // Atualizar posição da figurinha também
+            if (window.characterMarker) {
+                window.characterMarker.setPosition(newPosition);
+            }
         }
     });
 }
@@ -164,6 +196,11 @@ function startNewRound() {
     // Adicionar delay para evitar muitas requisições seguidas
     setTimeout(() => {
         streetView.setPosition(currentLocation);
+        
+        // Atualizar posição da figurinha também
+        if (window.characterMarker) {
+            window.characterMarker.setPosition(currentLocation);
+        }
     }, 500); // Delay de 500ms
     
     if (window.userMarker) {
