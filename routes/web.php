@@ -79,11 +79,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/ranking/{gincana}', [RankingController::class, 'show'])->name('ranking.show');
     Route::get('/ranking-geral', [RankingController::class, 'geral'])->name('ranking.geral');
     
-    // Rotas para comentários
+    // Rotas para comentários (sem middleware auth temporariamente)
     Route::post('/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
+    Route::get('/comentarios/{gincana_id}', [ComentarioController::class, 'index'])->name('comentarios.index');
 });
-
-Route::get('/comentarios/{gincana_id}', [ComentarioController::class, 'index'])->name('comentarios.index');
 
 // Rotas do Google OAuth
 Route::get('auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');

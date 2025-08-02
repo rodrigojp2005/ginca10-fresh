@@ -660,7 +660,7 @@ async function loadComments(gincanaId) {
 }
 
 // Função para adicionar comentário
-async function addComment(gincanaId) {
+window.addComment = async function(gincanaId) {
     const textarea = document.getElementById('new-comment');
     const conteudo = textarea.value.trim();
     
@@ -693,9 +693,8 @@ async function addComment(gincanaId) {
         
         if (data.success) {
             textarea.value = '';
-            loadComments(gincanaId); // Recarregar comentários
+            loadComments(gincanaId);
             
-            // Toast de sucesso
             Swal.fire({
                 toast: true,
                 position: 'top-end',
