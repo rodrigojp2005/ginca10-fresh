@@ -12,28 +12,27 @@ class ComentarioController extends Controller
     public function index($gincana_id)
     {
         try {
-            Log::info("Buscando comentários para gincana_id: " . $gincana_id);
+            // Primeiro verificar se é um número válido
+            if (!is_numeric($gincana_id)) {
+                return response()->json(['error' => 'ID inválido'], 400);
+            }
             
             $comentarios = Comentario::where('gincana_id', $gincana_id)
-                ->with('user')
+                ->with('user:id,name')  // Carregar apenas id e name do usuário
                 ->orderBy('created_at', 'desc')
                 ->get();
-
-            Log::info("Encontrados " . $comentarios->count() . " comentários");
             
             return response()->json($comentarios);
+            
         } catch (\Exception $e) {
-            Log::error("Erro ao carregar comentários: " . $e->getMessage());
-            return response()->json([]);
+            \Log::error("Erro ao buscar comentários: " . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
     public function store(Request $request)
     {
         try {
-            Log::info("Dados recebidos: ", $request->all());
-            Log::info("Usuário autenticado: " . (Auth::check() ? Auth::id() : 'Não logado'));
-            
             // Validação básica
             $validated = $request->validate([
                 'gincana_id' => 'required|integer',
@@ -49,9 +48,7 @@ class ComentarioController extends Controller
                 'conteudo' => $validated['conteudo']
             ]);
 
-            $comentario->load('user');
-
-            Log::info("Comentário salvo com sucesso", ['id' => $comentario->id]);
+            $comentario->load('user:id,name');
 
             return response()->json([
                 'success' => true,
@@ -59,10 +56,10 @@ class ComentarioController extends Controller
             ]);
             
         } catch (\Exception $e) {
-            Log::error("Erro completo: " . $e->getMessage() . " | Linha: " . $e->getLine() . " | Arquivo: " . $e->getFile());
+            \Log::error("Erro ao salvar comentário: " . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Erro: ' . $e->getMessage()
+                'message' => $e->getMessage()
             ], 500);
         }
     }

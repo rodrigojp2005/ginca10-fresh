@@ -80,6 +80,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/ranking-geral', [RankingController::class, 'geral'])->name('ranking.geral');
     
     // Rotas para comentários (sem middleware auth temporariamente)
+    Route::get('/test-comentarios', function() {
+        return response()->json(['message' => 'Rota de teste funcionando', 'timestamp' => now()]);
+    });
     Route::post('/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
     Route::get('/comentarios/{gincana_id}', [ComentarioController::class, 'index'])->name('comentarios.index');
 });

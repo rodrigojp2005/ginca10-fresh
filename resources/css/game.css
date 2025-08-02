@@ -1,8 +1,34 @@
 /* Estilos do jogo extraídos do welcome.blade.php */
+
+/* Garantir que o body e html ocupem toda a altura disponível */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Garantir que o container principal ocupe toda a altura */
+.min-h-screen {
+    min-height: 100vh !important;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main deve ocupar o espaço restante */
+main.flex-1 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
 .game-container {
     position: relative;
     width: 100%;
-    height: calc(100vh - 140px); /* Ajustado: ~64px nav + ~76px footer */
+    height: 100%; /* Ocupar toda a altura disponível do main */
+    flex: 1;
     overflow: hidden;
     min-height: 500px; /* Altura mínima para dispositivos pequenos */
 }
@@ -197,7 +223,6 @@
 /* Responsividade para mobile */
 @media (max-width: 768px) {
     .game-container {
-        height: calc(100vh - 100px); /* Ajustado para mobile com footer menor */
         min-height: 400px;
     }
     
@@ -256,7 +281,6 @@
 /* Garantir que footer não sobreponha o jogo */
 @media (max-width: 480px) {
     .game-container {
-        height: calc(100vh - 120px); /* Ajustado para telas muito pequenas */
         min-height: 350px;
     }
     

@@ -15,8 +15,6 @@ class Comentario extends Model
         'conteudo'
     ];
 
-    protected $with = ['user']; // Carregar sempre o usuário
-
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -623,8 +623,27 @@ function showPostModal(location) {
 // Função para carregar comentários
 async function loadComments(gincanaId) {
     try {
+        console.log('Carregando comentários para gincana_id:', gincanaId);
+        
         const response = await fetch(`/comentarios/${gincanaId}`);
-        const comentarios = await response.json();
+        
+        // Verificar se a resposta é OK
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        // Verificar se é JSON válido
+        const textResponse = await response.text();
+        console.log('Resposta do servidor:', textResponse.substring(0, 500)); // Log dos primeiros 500 caracteres
+        
+        let comentarios;
+        try {
+            comentarios = JSON.parse(textResponse);
+        } catch (jsonError) {
+            console.error('Erro ao parsear JSON:', jsonError);
+            console.error('Resposta completa:', textResponse);
+            throw new Error('Resposta não é um JSON válido');
+        }
         
         const commentsList = document.getElementById('comments-list');
         if (!commentsList) return;
@@ -652,7 +671,7 @@ async function loadComments(gincanaId) {
         console.error('Erro ao carregar comentários:', error);
         document.getElementById('comments-list').innerHTML = `
             <div style="text-align: center; color: #dc3545;">
-                ❌ Erro ao carregar comentários
+                ❌ Erro ao carregar comentários: ${error.message}
             </div>
         `;
     }
@@ -674,6 +693,8 @@ window.addComment = async function(gincanaId) {
     }
     
     try {
+        console.log('Enviando comentário para gincana_id:', gincanaId);
+        
         const csrfToken = document.querySelector('meta[name="csrf-token"]');
         const response = await fetch('/comentarios', {
             method: 'POST',
@@ -688,7 +709,23 @@ window.addComment = async function(gincanaId) {
             })
         });
         
-        const data = await response.json();
+        // Verificar se a resposta é OK
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        // Verificar se é JSON válido
+        const textResponse = await response.text();
+        console.log('Resposta do servidor (comentário):', textResponse.substring(0, 500));
+        
+        let data;
+        try {
+            data = JSON.parse(textResponse);
+        } catch (jsonError) {
+            console.error('Erro ao parsear JSON:', jsonError);
+            console.error('Resposta completa:', textResponse);
+            throw new Error('Resposta não é um JSON válido');
+        }
         
         if (data.success) {
             textarea.value = '';
@@ -703,7 +740,7 @@ window.addComment = async function(gincanaId) {
                 timer: 2000
             });
         } else {
-            throw new Error('Erro ao adicionar comentário');
+            throw new Error(data.message || 'Erro ao adicionar comentário');
         }
         
     } catch (error) {
@@ -711,7 +748,7 @@ window.addComment = async function(gincanaId) {
         Swal.fire({
             icon: 'error',
             title: 'Erro',
-            text: 'Não foi possível adicionar seu comentário. Tente novamente.',
+            text: `Não foi possível adicionar seu comentário: ${error.message}`,
             confirmButtonColor: '#dc3545'
         });
     }
