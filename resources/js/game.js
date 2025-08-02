@@ -116,17 +116,7 @@ function initializeStreetView() {
     });
 
     window.characterMarker.addListener('click', function() {
-        const message = currentLocation && currentLocation.contexto ? 
-            currentLocation.contexto :
-            'Procure no mapa e ajude a me encontrarem neste local desconhecido, buá, buá!';
-            
-        Swal.fire({
-            title: currentLocation && currentLocation.name ? currentLocation.name : 'Onde estou ...',
-            text: message,
-            icon: 'question',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#3085d6',
-        });
+        showPostModal(currentLocation);
     });
     
     // Adicionar listener para detectar erros de Street View
@@ -579,4 +569,167 @@ function showGameTutorial() {
         imageHeight: 200,
         imageAlt: "Custom image"
     });
+}
+
+// Nova função para mostrar modal com comentários
+function showPostModal(location) {
+    const isAuthenticated = window.isAuthenticated || false;
+    
+    Swal.fire({
+        title: location.name || 'Local Misterioso',
+        html: `
+            <div class="post-content" style="text-align: left;">
+                <div class="post-inicial" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0; color: #495057;">📍 Dica do Local:</h4>
+                    <p style="margin: 0; color: #6c757d; font-style: italic;">"${location.contexto || 'Descubra onde estou!'}"</p>
+                </div>
+                
+                <div class="comments-section">
+                    <h4 style="margin: 0 0 15px 0; color: #495057;">💬 Comentários da Comunidade</h4>
+                    <div id="comments-list" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;">
+                        <div style="text-align: center; color: #6c757d;">
+                            <i class="fas fa-spinner fa-spin"></i> Carregando comentários...
+                        </div>
+                    </div>
+                    
+                    ${isAuthenticated ? `
+                        <div class="add-comment" style="border-top: 1px solid #dee2e6; padding-top: 15px;">
+                            <textarea id="new-comment" placeholder="Compartilhe sua experiência sobre este local..." 
+                                style="width: 100%; height: 80px; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; resize: vertical; font-family: inherit;"></textarea>
+                            <button onclick="addComment(${location.gincana_id || location.id})" 
+                                style="margin-top: 10px; background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                                💬 Comentar
+                            </button>
+                        </div>
+                    ` : `
+                        <div style="text-align: center; padding: 15px; background: #e9ecef; border-radius: 4px;">
+                            <p style="margin: 0; color: #6c757d;">
+                                <a href="/login" style="color: #007bff; text-decoration: none;">🔐 Faça login</a> 
+                                para comentar e interagir com a comunidade!
+                            </p>
+                        </div>
+                    `}
+                </div>
+            </div>
+        `,
+        width: 600,
+        showCloseButton: true,
+        showConfirmButton: false,
+        didOpen: () => {
+            loadComments(location.gincana_id || location.id);
+        }
+    });
+}
+
+// Função para carregar comentários
+async function loadComments(gincanaId) {
+    try {
+        const response = await fetch(`/comentarios/${gincanaId}`);
+        const comentarios = await response.json();
+        
+        const commentsList = document.getElementById('comments-list');
+        if (!commentsList) return;
+        
+        if (comentarios.length === 0) {
+            commentsList.innerHTML = `
+                <div style="text-align: center; color: #6c757d; padding: 20px;">
+                    🤔 Seja o primeiro a comentar sobre este local!
+                </div>
+            `;
+            return;
+        }
+        
+        commentsList.innerHTML = comentarios.map(comentario => `
+            <div class="comment" style="border-bottom: 1px solid #eee; padding: 12px 0;">
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <strong style="color: #495057; font-size: 14px;">${comentario.user.name}</strong>
+                    <small style="color: #6c757d; margin-left: 10px;">${formatDate(comentario.created_at)}</small>
+                </div>
+                <p style="margin: 0; color: #495057; line-height: 1.4; font-size: 14px;">${comentario.conteudo}</p>
+            </div>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Erro ao carregar comentários:', error);
+        document.getElementById('comments-list').innerHTML = `
+            <div style="text-align: center; color: #dc3545;">
+                ❌ Erro ao carregar comentários
+            </div>
+        `;
+    }
+}
+
+// Função para adicionar comentário
+async function addComment(gincanaId) {
+    const textarea = document.getElementById('new-comment');
+    const conteudo = textarea.value.trim();
+    
+    if (!conteudo) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atenção',
+            text: 'Digite seu comentário primeiro!',
+            confirmButtonColor: '#007bff'
+        });
+        return;
+    }
+    
+    try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        const response = await fetch('/comentarios', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                gincana_id: gincanaId,
+                conteudo: conteudo
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            textarea.value = '';
+            loadComments(gincanaId); // Recarregar comentários
+            
+            // Toast de sucesso
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Comentário adicionado!',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        } else {
+            throw new Error('Erro ao adicionar comentário');
+        }
+        
+    } catch (error) {
+        console.error('Erro ao adicionar comentário:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: 'Não foi possível adicionar seu comentário. Tente novamente.',
+            confirmButtonColor: '#dc3545'
+        });
+    }
+}
+
+// Função para formatar data
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = (now - date) / (1000 * 60 * 60);
+    
+    if (diffInHours < 1) {
+        return 'Agora mesmo';
+    } else if (diffInHours < 24) {
+        return `${Math.floor(diffInHours)}h atrás`;
+    } else {
+        return date.toLocaleDateString('pt-BR');
+    }
 }

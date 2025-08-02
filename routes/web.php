@@ -5,6 +5,7 @@ use App\Http\Controllers\GincanaController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\ComentarioController;
 use App\Models\Gincana;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -77,7 +78,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/rankings', [RankingController::class, 'index'])->name('ranking.index');
     Route::get('/ranking/{gincana}', [RankingController::class, 'show'])->name('ranking.show');
     Route::get('/ranking-geral', [RankingController::class, 'geral'])->name('ranking.geral');
+    
+    // Rotas para comentários
+    Route::post('/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
 });
+
+Route::get('/comentarios/{gincana_id}', [ComentarioController::class, 'index'])->name('comentarios.index');
 
 // Rotas do Google OAuth
 Route::get('auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
