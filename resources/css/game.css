@@ -2,7 +2,7 @@
 .game-container {
     position: relative;
     width: 100%;
-    height: calc(100vh - 80px); /* Ajustado para dar menos espaço, aproveitando o footer menor */
+    height: calc(100vh - 140px); /* Ajustado: ~64px nav + ~76px footer */
     overflow: hidden;
     min-height: 500px; /* Altura mínima para dispositivos pequenos */
 }

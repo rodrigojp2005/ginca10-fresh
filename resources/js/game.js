@@ -604,8 +604,7 @@ function showPostModal(location) {
                     ` : `
                         <div style="text-align: center; padding: 15px; background: #e9ecef; border-radius: 4px;">
                             <p style="margin: 0; color: #6c757d;">
-                                <a href="/login" style="color: #007bff; text-decoration: none;">🔐 Faça login</a> 
-                                para comentar e interagir com a comunidade!
+                                🔐 Faça login  para comentar e interagir com a comunidade!
                             </p>
                         </div>
                     `}
