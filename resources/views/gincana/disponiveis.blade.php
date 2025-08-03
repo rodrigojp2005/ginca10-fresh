@@ -80,10 +80,10 @@
                                    class="flex-1 bg-green-600 text-white text-center px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium">
                                     🎮 Jogar Agora
                                 </a>
-                                <a href="{{ route('gincana.show', $gincana) }}" 
+                                <!-- <a href="{{ route('gincana.show', $gincana) }}" 
                                    class="flex-1 bg-gray-600 text-white text-center px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 text-sm font-medium">
                                     👁️ Ver Detalhes
-                                </a>
+                                </a> -->
                             </div>
                         </div>
                     </div>

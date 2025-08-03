@@ -4,6 +4,16 @@
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
+        <!-- <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                🎮 Gincanas Jogadas!
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Aqui estão todas as gincanas que você participou. Clique em uma gincana para ver o ranking!
+            </p>
+        </div> -->
+
+        @if($gincanasJogadas->count() > 0)
         <div class="text-center mb-8">
             <h1 class="text-4xl font-bold text-gray-900 mb-4">
                 🎮 Gincanas Jogadas!
@@ -12,8 +22,6 @@
                 Aqui estão todas as gincanas que você participou. Clique em uma gincana para ver o ranking!
             </p>
         </div>
-
-        @if($gincanasJogadas->count() > 0)
             <!-- Gincanas List -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($gincanasJogadas as $gincana)
@@ -108,24 +116,23 @@
 
         @else
             <!-- Empty State -->
-            <div class="text-center py-16">
-                <div class="max-w-md mx-auto">
-                    <div class="text-6xl mb-6">🎮</div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">
-                        Nenhuma gincana jogada ainda
-                    </h3>
-                    <p class="text-gray-600 mb-8">
-                        Você ainda não participou de nenhuma gincana. Que tal começar agora?
-                    </p>
-                    
+           <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                    🎮
+                    <br> Nenhuma Gincana Jogada Ainda!
+                </h1>
+                <!-- <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Aqui estão todas as gincanas que você participou. Clique em uma gincana para ver o ranking!
+                </p> -->
+            </div>  
+            <div class="text-center py-4">
+                <div class="max-w-md mx-auto">                  
                     <div class="space-y-4">
                         <a href="{{ route('home') }}" 
                            class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
                             🎯 Jogar Agora
                         </a>
-                        
                         <div class="text-gray-500">ou</div>
-                        
                         <a href="{{ route('ranking.index') }}" 
                            class="inline-block bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium">
                             🏆 Ver Rankings
