@@ -2,7 +2,8 @@
     <nav class="flex items-center justify-between p-4 bg-white shadow-md z-50 relative">
         <!-- Logo -->
         <div class="flex items-center">
-            <a href="{{ url('/') }}" class="text-xl font-bold text-blue-600 hover:underline">
+            <a href="{{ url('/') }}" class="flex items-center text-xl font-bold text-blue-600 hover:underline">
+            <img src="{{ asset('images/gincaneiros_logo.png') }}" alt="Logo" class="h-8 w-8 mr-2">
             Gincaneiros
             </a>
         </div>
@@ -192,29 +193,17 @@
             title: 'Como Jogar',
             html: `
                 <div class="text-left">
-                    <h4 class="font-bold mb-2">🎯 Objetivo do Jogo:</h4>
-                    <p class="mb-3">Descubra onde você está no mundo usando apenas as imagens do Street View!</p>
-                    
-                    <h4 class="font-bold mb-2">🎮 Como Jogar</h4>
-                    <ul class="list-disc list-inside mb-3 space-y-1">
-                        <li>Observe atentamente a imagem do Street View</li>
-                        <li>Procure por pistas: placas, arquitetura, vegetação, idioma</li>
-                        <li>Clique em "Ver Mapa" para fazer seu palpite</li>
-                        <li>Marque no mapa onde você acha que está</li>
-                        <li>Confirme seu palpite e veja sua pontuação!</li>
-                    </ul>
-                    
-                    <h4 class="font-bold mb-2">⭐ Pontuação</h4>
-                    <p class="mb-3">Quanto mais próximo do local real, maior sua pontuação!</p>
-                    
-                    <h4 class="font-bold mb-2">🏆 Dicas</h4>
-                    <ul class="list-disc list-inside space-y-1">
-                        <li>Observe o lado da estrada (direita/esquerda)</li>
-                        <li>Preste atenção nas placas e sinalizações</li>
-                        <li>Note o estilo arquitetônico dos prédios</li>
-                        <li>Observe a vegetação e clima</li>
-                    </ul>
-                </div>
+    <h4 class="font-bold mb-2">🎯 Objetivo do Jogo:</h4>
+    <p class="mb-3">Adivinhe onde está apenas pela imagem do Street View.</p>
+
+    <h4 class="font-bold mb-2">🎮 Como Jogar</h4>
+    <ul class="list-disc list-inside mb-3 space-y-1">
+        <li>Analise a imagem e busque por pistas</li>
+        <li>Clique em Start e marque o local no mapa</li>
+        <li>Confirme o Palpite, você tem 5 tentativas</li>
+        <li>Caso erre, leia a dica da distância e direção!</li>
+    </ul>
+</div>
             `,
             icon: 'info',
             confirmButtonText: 'Entendi!',
@@ -229,21 +218,14 @@
             html: `
                 <div class="text-left">
                     <h4 class="font-bold mb-2">🌍 O que é o Gincaneiros?</h4>
-                    <p class="mb-3">Gincaneiros é um jogo de geolocalização baseado no conceito do GeoGuessr, onde você precisa adivinhar sua localização no mundo usando apenas imagens do Google Street View.</p>
-                    
-                    <h4 class="font-bold mb-2">🎯 Funcionalidades</h4>
+                    <p class="mb-3">É uma brincadeira de desafios para testar a memória afetiva dos seus amigos e parentes ou ainda mostrar para eles lugares que você já visitou ou quer visitar.</p>             
+                    <h4 class="font-bold mb-2">🎯 Crie sua Gincana</h4>
                     <ul class="list-disc list-inside mb-3 space-y-1">
-                        <li><strong>Jogar:</strong> Desafie-se com localizações aleatórias</li>
-                        <li><strong>Criar Gincanas:</strong> Crie seus próprios desafios personalizados</li>
-                        <li><strong>Gincanas Personalizadas:</strong> Jogue gincanas criadas por outros usuários</li>
-                        <li><strong>Sistema de Pontuação:</strong> Acompanhe seu progresso e melhore suas habilidades</li>
+                        <li><strong>Infância:</strong> Desafie alguém se lembrar de determinado local</li>
+                        <li><strong>Viagens:</strong> Desafie alguém adivinhar o local que você quer conhecer</li>
                     </ul>
-                    
-                    <h4 class="font-bold mb-2">🚀 Desenvolvido com</h4>
-                    <p class="mb-3">Laravel, JavaScript, Google Maps API e muito amor pela geografia!</p>
-                    
-                    <h4 class="font-bold mb-2">📞 Contato</h4>
-                    <p>Desenvolvido para diversão e aprendizado geográfico!</p>
+                    <h4 class="font-bold mb-2">🔍 Procure gicanas de amigos ou aleatórias.</h4>
+                    <h4 class="font-bold mb-2"><br>📞 Contato (zap): 53 981056952</h4>
                 </div>
             `,
             icon: 'question',
