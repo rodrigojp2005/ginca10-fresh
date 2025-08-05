@@ -82,15 +82,31 @@ function initializeMap() {
 
 function initializeStreetView() {
     // Obter uma posição aleatória dos locais disponíveis
-    let initialPosition = getRandomValidLocation();
-    
+    // Defina a posição da câmera e do personagem
+    const cameraOffset = 0.00025; // ~50 metros ao sul
+    let characterPosition = getRandomValidLocation();
+    let cameraPosition = {
+        lat: characterPosition.lat - cameraOffset,
+        lng: characterPosition.lng
+    };
+
+    // Função para calcular heading para olhar para o personagem
+    function calculateHeading(from, to) {
+        const dLng = to.lng - from.lng;
+        const dLat = to.lat - from.lat;
+        const angle = Math.atan2(dLng, dLat) * 180 / Math.PI;
+        return (angle + 360) % 360;
+    }
+
+    const heading = calculateHeading(cameraPosition, characterPosition);
+
     streetView = new google.maps.StreetViewPanorama(
         document.getElementById('streetview'),
         {
-            position: initialPosition,
+            position: cameraPosition,
             pov: { 
-                heading: Math.random() * 360, // Direção aleatória
-                pitch: Math.random() * 20 - 10 // Pitch entre -10 e 10 graus
+                heading: heading,
+                pitch: 0
             },
             zoom: 1,
             disableDefaultUI: true,
@@ -105,12 +121,12 @@ function initializeStreetView() {
 
     // Adiciona a figurinha como marcador no panorama (igual ao exemplo)
     window.characterMarker = new google.maps.Marker({
-        position: initialPosition,
-        map: streetView,  // Usar streetView como no exemplo
+        position: characterPosition,
+        map: streetView,
         icon: {
             url: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTRweGJoMHk1eG5nb2tyOHMyMHp1ZGlpYTFoZDZ6Ym9zZ3ZkYXB2MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/bvQHYGOF8UOXqXSFir/giphy.gif",
             scaledSize: new google.maps.Size(60, 80),
-            anchor: new google.maps.Point(30, 80) // Importante: anchor para posicionamento correto
+            anchor: new google.maps.Point(30, 80)
         },
         visible: true
     });
@@ -185,11 +201,33 @@ function startNewRound() {
     
     // Adicionar delay para evitar muitas requisições seguidas
     setTimeout(() => {
-        streetView.setPosition(currentLocation);
-        
+        // Defina a posição da câmera e do personagem
+        const cameraOffset = 0.00025; // ~50 metros ao sul
+        let characterPosition = {
+            lat: currentLocation.lat,
+            lng: currentLocation.lng
+        };
+        let cameraPosition = {
+            lat: characterPosition.lat - cameraOffset,
+            lng: characterPosition.lng
+        };
+
+        // Função para calcular heading para olhar para o personagem
+        function calculateHeading(from, to) {
+            const dLng = to.lng - from.lng;
+            const dLat = to.lat - from.lat;
+            const angle = Math.atan2(dLng, dLat) * 180 / Math.PI;
+            return (angle + 360) % 360;
+        }
+
+        const heading = calculateHeading(cameraPosition, characterPosition);
+
+        streetView.setPosition(cameraPosition);
+        streetView.setPov({ heading: heading, pitch: 0 });
+
         // Atualizar posição da figurinha também
         if (window.characterMarker) {
-            window.characterMarker.setPosition(currentLocation);
+            window.characterMarker.setPosition(characterPosition);
         }
     }, 500); // Delay de 500ms
     
