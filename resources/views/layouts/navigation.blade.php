@@ -1,12 +1,51 @@
 @if (Route::has('login'))
     <nav class="flex items-center justify-between p-4 bg-white shadow-md z-50 relative">
-        <!-- Logo -->
-        <div class="flex items-center">
+        <!-- Logo à esquerda -->
+        <div class="flex items-center flex-shrink-0">
             <a href="{{ url('/') }}" class="flex items-center text-xl font-bold text-blue-600 hover:underline">
-            <img src="{{ asset('images/gincaneiros_logo.png') }}" alt="Logo" class="h-8 w-8 mr-2">
-            Gincaneiros
+                <img src="{{ asset('images/gincaneiros_logo.png') }}" alt="Logo" class="h-8 w-8 mr-2">
+                Gincaneiros
             </a>
         </div>
+
+        <!-- Cronômetro centralizado -->
+        @if(isset($gincana) && isset($gincana->created_at) && isset($gincana->duracao))
+        <div class="flex-1 flex justify-center">
+            <div id="cronometro-gincana" style="font-weight: bold; color: #dc3545; font-size: 1.15em; background: #fff0f0; border-radius: 8px; padding: 6px 16px; display: flex; align-items: center; gap: 8px;">
+                <span>⏰</span>
+                <span id="cronometro-text"></span>
+            </div>
+        </div>
+        <script>
+            function iniciarCronometroGincana(createdAt, duracaoHoras) {
+                function atualizar() {
+                    // Parse createdAt (Laravel format: 'Y-m-d H:i:s')
+                    const partes = createdAt.split(/[- :]/);
+                    // Meses em JS começam do zero
+                    const dataCriacao = new Date(partes[0], partes[1]-1, partes[2], partes[3], partes[4], partes[5]);
+                    const fim = dataCriacao.getTime() + duracaoHoras * 3600 * 1000;
+                    const agora = new Date().getTime();
+                    let diff = Math.floor((fim - agora) / 1000);
+                    const cronometro = document.getElementById('cronometro-gincana');
+                    const textoSpan = document.getElementById('cronometro-text');
+                    if (!cronometro || !textoSpan) return;
+                    if (diff <= 0) {
+                        cronometro.innerHTML = '<span>⏰</span> <span style="color:#dc3545;font-weight:bold;">Gincana encerrada!</span>';
+                        return;
+                    }
+                    let h = Math.floor(diff / 3600);
+                    let m = Math.floor((diff % 3600) / 60);
+                    let s = diff % 60;
+                    let texto = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                    textoSpan.textContent = texto;
+                }
+                atualizar();
+                setInterval(atualizar, 1000);
+            }
+            iniciarCronometroGincana(@json((string) $gincana->created_at), @json($gincana->duracao));
+        </script>
+        @endif
+        <!-- ...restante do código permanece igual... -->
         
         <!-- Lado direito: Saudação mobile + Menu button -->
         <div class="md:hidden flex items-center gap-2">
