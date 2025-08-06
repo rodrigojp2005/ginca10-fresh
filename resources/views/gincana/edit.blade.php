@@ -79,7 +79,38 @@
             <a href="{{ route('gincana.index') }}" style="padding: 10px 28px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px; display: inline-block; font-weight: 600; font-size: 1.08em;">
                 Cancelar
             </a>
+            <button id="btn-compartilhar" type="button" style="padding: 10px 28px; background-color: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 1.08em; display: flex; align-items: center; gap: 8px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16"><path d="M13.5 1a2.5 2.5 0 0 0-2.45 2.01l-6.02 2.4A2.5 2.5 0 1 0 5.5 10.99l6.02 2.4a2.5 2.5 0 1 0 1.98-1.98l-6.02-2.4a2.5 2.5 0 0 0 0-1.98l6.02-2.4A2.5 2.5 0 1 0 13.5 1zm0 1a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zM2.5 6a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm11 7a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+                Compartilhar
+            </button>
         </div>
+
+        <!-- Modal Compartilhar -->
+        <div id="modal-compartilhar" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.35); z-index:9999; justify-content:center; align-items:center;">
+            <div style="background:#fff; border-radius:10px; padding:28px 22px; max-width:340px; width:90vw; box-shadow:0 2px 12px rgba(0,0,0,0.12); text-align:center;">
+                <h3 style="font-size:1.3em; font-weight:700; color:#198754; margin-bottom:18px;">Compartilhe com amigos!</h3>
+                <div style="display:flex; flex-direction:column; gap:14px;">
+                    <a href="https://wa.me/?text={{ urlencode(route('gincana.show', $gincana->id)) }}" target="_blank" style="background:#25D366; color:#fff; padding:10px; border-radius:6px; font-weight:600; text-decoration:none;">WhatsApp</a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(route('gincana.show', $gincana->id)) }}" target="_blank" style="background:#4267B2; color:#fff; padding:10px; border-radius:6px; font-weight:600; text-decoration:none;">Facebook</a>
+                    <button onclick="copiarLinkGincana()" style="background:#6c757d; color:#fff; padding:10px; border-radius:6px; font-weight:600; border:none;">Copiar Link</button>
+                </div>
+                <button onclick="fecharModalCompartilhar()" style="margin-top:18px; background:#dc3545; color:#fff; padding:8px 18px; border-radius:6px; border:none; font-weight:600;">Fechar</button>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById('btn-compartilhar').onclick = function() {
+                document.getElementById('modal-compartilhar').style.display = 'flex';
+            };
+            function fecharModalCompartilhar() {
+                document.getElementById('modal-compartilhar').style.display = 'none';
+            }
+            function copiarLinkGincana() {
+                const link = "{{ route('gincana.show', $gincana->id) }}";
+                navigator.clipboard.writeText(link);
+                alert('Link copiado!');
+            }
+        </script>
     </form>
 </div>
 
