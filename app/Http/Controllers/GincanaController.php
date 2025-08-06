@@ -124,9 +124,19 @@ class GincanaController extends Controller
     // Jogar uma gincana específica
     public function jogar(Gincana $gincana)
     {
+        $user = auth()->user();
+        $jaJogou = false;
+        if ($user) {
+            $jaJogou = \App\Models\Participacao::where('user_id', $user->id)
+                ->where('gincana_id', $gincana->id)
+                ->exists();
+        }
+        if ($jaJogou) {
+            return view('gincana.ja_jogada', compact('gincana'));
+        }
+
         // Criar array de locais da gincana
         $locations = [];
-        
         // Adicionar local principal da gincana
         $locations[] = [
             'lat' => (float) $gincana->latitude,
@@ -135,7 +145,6 @@ class GincanaController extends Controller
             'gincana_id' => $gincana->id,
             'contexto' => $gincana->contexto
         ];
-        
         return view('gincana.play', compact('gincana', 'locations'));
     }
 }
