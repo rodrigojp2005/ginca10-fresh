@@ -9,7 +9,7 @@
         </div>
 
         <!-- Cronômetro centralizado -->
-        @if(isset($gincana) && isset($gincana->created_at) && isset($gincana->duracao))
+        @if(request()->routeIs('gincana.jogar') && isset($gincana) && isset($gincana->created_at) && isset($gincana->duracao))
         <div class="flex-1 flex justify-center">
             <div id="cronometro-gincana" style="font-weight: bold; color: #dc3545; font-size: 1.15em; background: #fff0f0; border-radius: 8px; padding: 6px 16px; display: flex; align-items: center; gap: 8px;">
                 <span>⏰</span>
