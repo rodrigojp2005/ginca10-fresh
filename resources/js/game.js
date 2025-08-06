@@ -601,11 +601,12 @@ function showNoGincanaAlert() {
 function showGameTutorial() {
     return Swal.fire({
         title: "Vc é bom de investigação?",
-        text: " Vamos testar suas habilidades! 🕵️‍♂️",
+        text: " Vamos testar suas habilidades e ver se você consegue indentificar este local! 🕵️‍♂️",
         imageUrl: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExOG4wcTBrN2hpaDlhaGl0MHVnNDk5ZGo3ODNsa3V2YzI5c3R1aWdsNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l378tV67u1QQkSqFq/giphy.gif",
         imageWidth: 400,
         imageHeight: 200,
-        imageAlt: "Custom image"
+        imageAlt: "Custom image",
+        confirmButtonText: "Vamos lá! 🚀"
     });
 }
 

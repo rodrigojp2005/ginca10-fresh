@@ -21,7 +21,7 @@ main.flex-1 {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    /* overflow: hidden; removido para permitir scroll do conteúdo */
 }
 
 .game-container {

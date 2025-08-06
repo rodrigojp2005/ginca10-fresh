@@ -8,7 +8,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-4xl font-bold flex items-center">
-                        🌟 Ranking Geral dos Gincaneiros
+                        🌟 Ranking Geral dos Gincaneiros!
                     </h1>
                     <p class="text-purple-100 mt-2 text-lg">
                         Os melhores jogadores de todas as gincanas
@@ -66,7 +66,7 @@
             @endif
 
             <!-- Tabela Completa do Ranking -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="bg-white rounded-lg shadow-md">
                 <div class="bg-gradient-to-r from-purple-600 to-purple-800 p-4">
                     <h2 class="text-xl font-bold text-white flex items-center">
                         📊 Ranking Completo
@@ -197,8 +197,8 @@
             </div>
 
             <!-- Estatísticas Gerais -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
-                <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8 w-full">
+            <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex items-center">
                         <div class="p-3 bg-purple-100 rounded-full">
                             <span class="text-2xl">👥</span>
