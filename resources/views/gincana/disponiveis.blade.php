@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 py-8">
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 py-8 overflow-auto">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="text-center mb-8">
@@ -90,51 +90,23 @@
                 @endforeach
             </div>
 
-            <!-- Action buttons -->
+        @else
             <div class="text-center mt-12">
                 <div class="space-y-4">
                     <a href="{{ route('gincana.jogadas') }}" 
-                       class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
+                    class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
                         🎮 Ver Minhas Jogadas
                     </a>
-                    
                     <div class="text-gray-500">ou</div>
-                    
                     <a href="{{ route('gincana.create') }}" 
-                       class="inline-block bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium">
+                    class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium">
                         ➕ Criar Nova Gincana
                     </a>
                 </div>
             </div>
-
-        @else
-            <!-- Empty State -->
-            <div class="text-center py-16">
-                <div class="max-w-md mx-auto">
-                    <div class="text-6xl mb-6">🌟</div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">
-                        Nenhuma gincana disponível
-                    </h3>
-                    <p class="text-gray-600 mb-8">
-                        Você já jogou todas as gincanas disponíveis ou ainda não há gincanas criadas pela comunidade.
-                    </p>
-                    
-                    <div class="space-y-4">
-                        <a href="{{ route('gincana.create') }}" 
-                           class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">
-                            ➕ Criar Uma Gincana
-                        </a>
-                        
-                        <div class="text-gray-500">ou</div>
-                        
-                        <a href="{{ route('gincana.jogadas') }}" 
-                           class="inline-block bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium">
-                            🎮 Ver Minhas Jogadas
-                        </a>
-                    </div>
-                </div>
-            </div>
         @endif
+       
+        
     </div>
 </div>
 
