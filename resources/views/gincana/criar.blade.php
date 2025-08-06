@@ -13,15 +13,12 @@
 
         <!-- Duração -->
         <div style="margin-bottom: 16px;">
-            <label for="duracao" style="display: block; font-weight: bold; margin-bottom: 6px;">Duração (em minutos)</label>
+            <label for="duracao" style="display: block; font-weight: bold; margin-bottom: 6px;">Duração (em horas)</label>
             <select id="duracao" name="duracao" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
                 <option value="">Selecione a duração</option>
-                <option value="15">15 minutos</option>
-                <option value="30">30 minutos</option>
-                <option value="45">45 minutos</option>
-                <option value="60">1 hora</option>
-                <option value="90">1 hora e 30 minutos</option>
-                <option value="120">2 horas</option>
+                <option value="24">24 horas</option>
+                <option value="48">48 horas</option>
+                <option value="72">72 horas</option>
             </select>
         </div>
 

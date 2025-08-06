@@ -1,8 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+@if($gincanasDisponiveis->count() > 0)
 <div class="bg-gradient-to-br from-green-50 to-blue-100 py-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+@else
+<div class="flex flex-col min-h-screen bg-gradient-to-br from-green-50 to-blue-100 py-8">
+    <div class="flex-1 max-w-md mx-auto">
+@endif
         <!-- Header -->
         <div class="text-center mb-8">
             <h1 class="text-4xl font-bold text-gray-900 mb-4">
@@ -76,10 +81,16 @@
 
                             <!-- Actions -->
                             <div class="flex gap-2">
-                                <a href="{{ route('gincana.jogar', $gincana) }}" 
-                                   class="flex-1 bg-green-600 text-white text-center px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium">
-                                    🎮 Jogar Agora
-                                </a>
+                                @if(Auth::id() !== $gincana->user_id)
+                                    <a href="{{ route('gincana.jogar', $gincana) }}" 
+                                       class="flex-1 bg-green-600 text-white text-center px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium">
+                                        🎮 Jogar Agora
+                                    </a>
+                                @endif
+                                    <button type="button" onclick="compartilharGincanaDisponivel('{{ $gincana->nome }}', '{{ route('gincana.show', $gincana) }}')" class="flex-1 bg-blue-600 text-white text-center px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium flex items-center justify-center gap-2">
+                                        <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2R5aDI5bnVkNHAyMG5zM2tnNHVlOGY5NjA1ZW04ZzZrNzNpZGx4biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/XfmFPcUZTddaFZhLgt/giphy.gif" alt="Compartilhar" style="width: 20px; height: 20px;">
+                                        Compartilhar com amigo
+                                    </button>
                                 <!-- <a href="{{ route('gincana.show', $gincana) }}" 
                                    class="flex-1 bg-gray-600 text-white text-center px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 text-sm font-medium">
                                     👁️ Ver Detalhes
@@ -110,6 +121,19 @@
     </div>
 </div>
 
+<script>
+function compartilharGincanaDisponivel(nome, url) {
+    if (navigator.share) {
+        navigator.share({
+            title: nome,
+            text: `Jogue a gincana "${nome}"! Que tal criar uma gincana para mim também?`,
+            url: url
+        });
+    } else {
+        alert('Compartilhamento nativo não disponível neste dispositivo.');
+    }
+}
+</script>
 <style>
 .line-clamp-2 {
     display: -webkit-box;

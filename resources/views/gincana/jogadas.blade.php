@@ -1,8 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+@if($gincanasJogadas->count() > 0)
+<div class="bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+@else
+<div class="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div class="flex-1 max-w-md mx-auto">
+@endif
         <!-- Header -->
         <!-- <div class="text-center mb-8">
             <h1 class="text-4xl font-bold text-gray-900 mb-4">

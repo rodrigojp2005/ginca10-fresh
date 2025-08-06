@@ -17,15 +17,12 @@
 
         <!-- Duração -->
         <div style="margin-bottom: 16px;">
-            <label for="duracao" style="display: block; font-weight: bold; margin-bottom: 6px;">Duração (em minutos)</label>
+            <label for="duracao" style="display: block; font-weight: bold; margin-bottom: 6px;">Duração (em horas)</label>
             <select id="duracao" name="duracao" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
                 <option value="">Selecione a duração</option>
-                <option value="15" {{ $gincana->duracao == 15 ? 'selected' : '' }}>15 minutos</option>
-                <option value="30" {{ $gincana->duracao == 30 ? 'selected' : '' }}>30 minutos</option>
-                <option value="45" {{ $gincana->duracao == 45 ? 'selected' : '' }}>45 minutos</option>
-                <option value="60" {{ $gincana->duracao == 60 ? 'selected' : '' }}>1 hora</option>
-                <option value="90" {{ $gincana->duracao == 90 ? 'selected' : '' }}>1 hora e 30 minutos</option>
-                <option value="120" {{ $gincana->duracao == 120 ? 'selected' : '' }}>2 horas</option>
+                <option value="24" {{ $gincana->duracao == 24 ? 'selected' : '' }}>24 horas</option>
+                <option value="48" {{ $gincana->duracao == 48 ? 'selected' : '' }}>48 horas</option>
+                <option value="72" {{ $gincana->duracao == 72 ? 'selected' : '' }}>72 horas</option>
             </select>
         </div>
 
@@ -79,10 +76,10 @@
             <a href="{{ route('gincana.index') }}" style="padding: 10px 28px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px; display: inline-block; font-weight: 600; font-size: 1.08em;">
                 Cancelar
             </a>
-            <button id="btn-compartilhar" type="button" style="padding: 10px 28px; background-color: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 1.08em; display: flex; align-items: center; gap: 8px;">
+            <!-- <button id="btn-compartilhar" type="button" style="padding: 10px 28px; background-color: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 1.08em; display: flex; align-items: center; gap: 8px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16"><path d="M13.5 1a2.5 2.5 0 0 0-2.45 2.01l-6.02 2.4A2.5 2.5 0 1 0 5.5 10.99l6.02 2.4a2.5 2.5 0 1 0 1.98-1.98l-6.02-2.4a2.5 2.5 0 0 0 0-1.98l6.02-2.4A2.5 2.5 0 1 0 13.5 1zm0 1a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zM2.5 6a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm11 7a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
                 Compartilhar
-            </button>
+            </button> -->
         </div>
 
         <!-- Modal Compartilhar -->
