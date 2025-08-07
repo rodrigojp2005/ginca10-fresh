@@ -656,7 +656,10 @@ function showPostModal(location) {
         showCloseButton: true,
         showConfirmButton: false,
         didOpen: () => {
-            loadComments(location.gincana_id || location.id);
+            // Só carrega comentários se o usuário estiver autenticado
+            if (window.isAuthenticated) {
+                loadComments(location.gincana_id || location.id);
+            }
         }
     });
 }

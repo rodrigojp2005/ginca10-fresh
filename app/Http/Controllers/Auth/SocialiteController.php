@@ -35,7 +35,12 @@ class SocialiteController extends Controller
                 Auth::login($user);
             }
             
-            return redirect()->intended('/');
+            // Evita redirecionar para rotas AJAX após login social
+            $intended = session()->get('url.intended');
+            if ($intended && str_contains($intended, '/comentarios/')) {
+                return redirect(\App\Providers\RouteServiceProvider::HOME);
+            }
+            return redirect()->intended(\App\Providers\RouteServiceProvider::HOME);
             
         } catch (Exception $e) {
             return redirect('/login')->with('error', 'Erro ao fazer login com Google');

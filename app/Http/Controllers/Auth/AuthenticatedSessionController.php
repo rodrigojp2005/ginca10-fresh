@@ -29,6 +29,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Evita redirecionar para rotas AJAX após login
+        $intended = url()->previous();
+        if (str_contains($intended, '/comentarios/')) {
+            return redirect(RouteServiceProvider::HOME);
+        }
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
