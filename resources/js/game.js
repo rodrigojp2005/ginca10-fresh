@@ -56,7 +56,8 @@ function initializeMap() {
         rotateControl: false,
         scaleControl: false,
         panControl: false,
-        navigationControl: false
+        navigationControl: false,
+        gestureHandling: 'greedy' // Permite mover com um dedo só no mobile
     });
     map.addListener('click', function(event) {
         if (gameActive) {
@@ -110,7 +111,8 @@ function initializeStreetView() {
             },
             zoom: 1,
             disableDefaultUI: true,
-            showRoadLabels: false
+            showRoadLabels: false,
+            motionTracking: false // Impede navegação livre
         }
     );
     
