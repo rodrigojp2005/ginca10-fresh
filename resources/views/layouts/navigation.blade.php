@@ -4,7 +4,7 @@
         <div class="flex items-center flex-shrink-0">
             <a href="{{ url('/') }}" class="flex items-center text-xl font-bold text-blue-600 hover:underline">
                 <img src="{{ asset('images/gincaneiros_logo.png') }}" alt="Logo" class="h-8 w-8 mr-2">
-                Gincaneiros
+                Gincaneiros!
             </a>
         </div>
 
