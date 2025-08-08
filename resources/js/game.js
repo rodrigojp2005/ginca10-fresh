@@ -345,8 +345,8 @@ function confirmGuess() {
                     break;
             }
             message += `\n\n vá mais para o ${direction}.`;
-            message += `\n\n Falta(m) ${attempts} tentativa.`;
-            message += `\n\n Sua pontuação atual está em ${score} pts.`;
+            message += `\n\n Falta(m) ${attempts} tentativa(s).`;
+            message += `\n\n Pontuação atual: ${score} pts.`;
             Swal.fire({
                 title: title,
                 text: message.replace(/\n/g, ' '),
