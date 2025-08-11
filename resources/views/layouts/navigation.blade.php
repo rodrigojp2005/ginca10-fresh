@@ -119,6 +119,23 @@
                 <a href="#" onclick="event.preventDefault(); mostrarSobreJogo()" class="text-gray-600 hover:text-gray-800 hover:bg-gray-100 px-3 py-2 rounded-md transition-all duration-200">
                     Sobre
                 </a>
+
+                <!-- Notificações internas -->
+                <div class="relative" x-data="{open:false}" @click.outside="open=false">
+                    <button id="notif-bell" @click="open=!open" class="relative text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md transition-all duration-200">
+                        🔔
+                        <span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full"></span>
+                    </button>
+                    <div x-show="open" x-transition class="absolute right-0 mt-2 w-80 max-h-96 overflow-auto bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                        <div class="flex items-center justify-between px-3 py-2 border-b">
+                            <span class="font-semibold text-sm">Notificações</span>
+                            <button id="notif-mark-all" class="text-xs text-blue-600 hover:underline">Marcar todas lidas</button>
+                        </div>
+                        <ul id="notif-list" class="divide-y divide-gray-100 text-sm">
+                            <li class="p-3 text-gray-400 italic" id="notif-empty">Sem novas notificações</li>
+                        </ul>
+                    </div>
+                </div>
                 
                 <!-- Saudação do usuário - próxima ao menu -->
                 <span class="text-gray-600 text-sm border-l border-gray-300 pl-4 ml-2">
@@ -278,6 +295,55 @@
     <script>
     // Mobile menu functionality - funciona para todos os usuários
     document.addEventListener('DOMContentLoaded', function() {
+        // Polling de notificações internas
+        if (window.LaravelIsAuthenticated) {
+            const badge = document.getElementById('notif-badge');
+            const list = document.getElementById('notif-list');
+            const empty = document.getElementById('notif-empty');
+            const markAllBtn = document.getElementById('notif-mark-all');
+            async function fetchNotifs(){
+                try {
+                    const r = await fetch('/notifications');
+                    if(!r.ok) return; 
+                    const data = await r.json();
+                    const count = data.unread_count || 0;
+                    if(count>0){
+                        badge.textContent = count>99?'99+':count;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                    // Render
+                    list.querySelectorAll('li').forEach(li=>li.remove());
+                    if(data.notifications.length===0){
+                        const li=document.createElement('li');
+                        li.className='p-3 text-gray-400 italic';
+                        li.textContent='Sem novas notificações';
+                        list.appendChild(li);
+                    } else {
+                        data.notifications.forEach(n=>{
+                            const li=document.createElement('li');
+                            li.className='p-3 hover:bg-gray-50 cursor-pointer';
+                            li.innerHTML=`<div class='font-medium text-gray-800'>${n.autor||'Alguém'} comentou</div>
+                                <div class='text-gray-600 line-clamp-2'>${(n.conteudo||'').substring(0,120)}</div>
+                                <div class='text-xs text-gray-400 mt-1'>${n.gincana_nome?('Gincana: '+n.gincana_nome):''}</div>`;
+                            li.addEventListener('click', async () => {
+                                if(n.id){ await fetch('/notifications/read', {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}, body: JSON.stringify({id:n.id})}); }
+                                if(n.gincana_id) window.location.href='/gincana/'+n.gincana_id+'/jogar';
+                                else if(n.url) window
+                            });
+                            list.appendChild(li);
+                        });
+                    }
+                } catch(e){ console.warn('Falha notificações', e); }
+            }
+            fetchNotifs();
+            setInterval(fetchNotifs, 15000); // 15s
+            markAllBtn?.addEventListener('click', async ()=>{
+                await fetch('/notifications/read',{method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}, body: '{}'});
+                fetchNotifs();
+            });
+        }
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         const mobileMenuPanel = document.getElementById('mobile-menu-panel');

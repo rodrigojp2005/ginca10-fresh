@@ -85,6 +85,27 @@ Route::middleware('auth')->group(function () {
     });
     Route::post('/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
     Route::get('/comentarios/{gincana_id}', [ComentarioController::class, 'index'])->name('comentarios.index');
+
+    // Push subscription
+    Route::post('/push/subscribe', [\App\Http\Controllers\PushSubscriptionController::class, 'store'])->name('push.subscribe');
+    Route::post('/push/unsubscribe', [\App\Http\Controllers\PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
+    Route::post('/push/test', function() { 
+        $user = Auth::user();
+        if(!$user) return response()->json(['error' => 'no auth'], 401);
+        $fakeComentario = new \App\Models\Comentario([
+            'gincana_id' => 1,
+            'user_id' => $user->id,
+            'conteudo' => 'Teste de notificação manual'
+        ]);
+        $fakeComentario->setRelation('user', $user);
+        $fakeComentario->setRelation('gincana', new \App\Models\Gincana(['nome' => 'Gincana Teste']));
+        $user->notify(new \App\Notifications\NewCommentNotification($fakeComentario));
+        return response()->json(['sent' => true]);
+    });
+
+    // Notificações internas
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
+    Route::post('/notifications/read', [\App\Http\Controllers\NotificationController::class, 'markRead']);
 });
 
 // Rotas do Google OAuth
