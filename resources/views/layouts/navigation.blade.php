@@ -1,7 +1,15 @@
 @if (Route::has('login'))
     <nav class="flex items-center justify-between p-2 md:p-4 bg-white shadow-md z-50 relative">
+        <!-- Logo / Brand à esquerda -->
+        <div class="flex items-center min-w-0">
+            <a href="{{ route('home') }}" class="flex items-center gap-2 font-bold text-lg md:text-xl text-gray-800 hover:text-blue-600 whitespace-nowrap">
+                <span class="text-2xl leading-none">🌞</span>
+                <span class="tracking-tight">Gincaneiros</span>
+            </a>
+        </div>
+
         <!-- Ações à direita (mobile + desktop) -->
-        <div class="flex items-center gap-2 md:gap-4">
+        <div class="flex items-center gap-2 md:gap-4 ml-4">
             @auth
                 <!-- Sino de notificações (sempre visível) -->
                 <div class="relative">
@@ -44,6 +52,9 @@
                         </ul>
                     </div>
                 </div>
+                <!-- Links informativos (recolhidos) -->
+                <a href="#" onclick="event.preventDefault(); mostrarComoJogar()" class="hidden md:inline-block px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md">Como Jogar</a>
+                <a href="#" onclick="event.preventDefault(); mostrarSobreJogo()" class="hidden md:inline-block px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md">Sobre</a>
             @else
                 <a href="{{ route('login') }}" class="px-3 py-1 text-sm font-medium text-blue-600 hover:underline">Entrar</a>
                 @if (Route::has('register'))
@@ -58,57 +69,7 @@
                 </svg>
             </button>
         </div>
-        <!-- Menus maiores (desktop) permanecem com classes utilitárias -->
-        <!-- (Se quiser reintroduzir os menus de "Gincanas" e "Rankings" aqui, pode mover o bloco antigo antes do sino) -->
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Links informativos -->
-                <a href="#" onclick="event.preventDefault(); mostrarComoJogar()" class="text-gray-600 hover:text-gray-800 hover:bg-gray-100 px-3 py-2 rounded-md transition-all duration-200">
-                    Como Jogar
-                </a>
-                <a href="#" onclick="event.preventDefault(); mostrarSobreJogo()" class="text-gray-600 hover:text-gray-800 hover:bg-gray-100 px-3 py-2 rounded-md transition-all duration-200">
-                    Sobre
-                </a>
-
-                <!-- Notificações internas -->
-                <div class="relative" x-data="{open:false}" @click.outside="open=false">
-                    <button id="notif-bell" @click="open=!open" class="relative text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md transition-all duration-200">
-                        🔔
-                        <span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full"></span>
-                    </button>
-                    <div x-show="open" x-transition class="absolute right-0 mt-2 w-80 max-h-96 overflow-auto bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                        <div class="flex items-center justify-between px-3 py-2 border-b">
-                            <span class="font-semibold text-sm">Notificações</span>
-                            <button id="notif-mark-all" class="text-xs text-blue-600 hover:underline">Marcar todas lidas</button>
-                        </div>
-                        <ul id="notif-list" class="divide-y divide-gray-100 text-sm">
-                            <li class="p-3 text-gray-400 italic" id="notif-empty">Sem novas notificações</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <!-- Saudação do usuário - próxima ao menu -->
-                <span class="text-gray-600 text-sm border-l border-gray-300 pl-4 ml-2">
-                    👋 Olá, <strong class="text-gray-800">{{ Auth::user()->name }}</strong>
-                </span>
-                
-                <form method="POST" action="{{ route('logout') }}" style="display:inline;">
-                    @csrf
-                    <button type="submit" class="text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-2 rounded-md transition-all duration-200">
-                        Sair
-                    </button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-800 hover:bg-gray-100 px-3 py-2 rounded-md transition-all duration-200">Entrar</a>
-                <a href="{{ route('register') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all duration-200">
-                    Registrar
-                </a>
-            @endauth
-        </div>
-
-        <!-- Mobile menu overlay -->
+    <!-- Mobile menu overlay -->
         <div id="mobile-menu" class="md:hidden fixed inset-0 bg-black bg-opacity-50 hidden" style="z-index: 99999 !important;">
             <div class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform translate-x-full transition-transform duration-300" id="mobile-menu-panel" style="z-index: 100000 !important;">
                 <div class="p-4 border-b border-gray-200">
@@ -291,8 +252,13 @@
                                         <div class='text-gray-600 text-sm'>${(n.conteudo||'').substring(0,120)}</div>
                                         <div class='text-xs text-gray-400 mt-1'>${n.gincana_nome?('Gincana: '+n.gincana_nome):''}</div>`;
                         li.addEventListener('click', async () => {
-                            if(n.id){ await fetch('/notifications/read', {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}, body: JSON.stringify({id:n.id})}); }
-                            // Não redireciona mais.
+                            if(n.id){
+                                await fetch('/notifications/read', {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}, body: JSON.stringify({id:n.id})});
+                            }
+                            if(n.gincana_id){
+                                window.location.href = '/gincana/' + n.gincana_id +'/jogar'; // redireciona para a gincana
+                                return;
+                            }
                             fetchNotifs();
                         });
                         notifList.appendChild(li);
