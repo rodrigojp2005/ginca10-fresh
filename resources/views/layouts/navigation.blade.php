@@ -1,113 +1,65 @@
 @if (Route::has('login'))
-    <nav class="flex items-center justify-between p-4 bg-white shadow-md z-50 relative">
-        <!-- Logo à esquerda -->
-        <div class="flex items-center flex-shrink-0">
-            <a href="{{ url('/') }}" class="flex items-center text-xl font-bold text-blue-600 hover:underline">
-                <img src="{{ asset('images/gincaneiros_logo.png') }}" alt="Logo" class="h-8 w-8 mr-2">
-                Gincaneiros
-            </a>
-        </div>
-
-        <!-- Cronômetro centralizado -->
-        @if(request()->routeIs('gincana.jogar') && isset($gincana) && isset($gincana->created_at) && isset($gincana->duracao))
-        <div class="flex-1 flex justify-center">
-            <div id="cronometro-gincana" style="font-weight: bold; color: #dc3545; font-size: 1.15em; background: #fff0f0; border-radius: 8px; padding: 6px 16px; display: flex; align-items: center; gap: 8px;">
-                <span>⏰</span>
-                <span id="cronometro-text"></span>
-            </div>
-        </div>
-        <script>
-            function iniciarCronometroGincana(createdAt, duracaoHoras) {
-                function atualizar() {
-                    // Parse createdAt (Laravel format: 'Y-m-d H:i:s')
-                    const partes = createdAt.split(/[- :]/);
-                    // Meses em JS começam do zero
-                    const dataCriacao = new Date(partes[0], partes[1]-1, partes[2], partes[3], partes[4], partes[5]);
-                    const fim = dataCriacao.getTime() + duracaoHoras * 3600 * 1000;
-                    const agora = new Date().getTime();
-                    let diff = Math.floor((fim - agora) / 1000);
-                    const cronometro = document.getElementById('cronometro-gincana');
-                    const textoSpan = document.getElementById('cronometro-text');
-                    if (!cronometro || !textoSpan) return;
-                    if (diff <= 0) {
-                        cronometro.innerHTML = '<span>⏰</span> <span style="color:#dc3545;font-weight:bold;">Gincana encerrada!</span>';
-                        return;
-                    }
-                    let h = Math.floor(diff / 3600);
-                    let m = Math.floor((diff % 3600) / 60);
-                    let s = diff % 60;
-                    let texto = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-                    textoSpan.textContent = texto;
-                }
-                atualizar();
-                setInterval(atualizar, 1000);
-            }
-            iniciarCronometroGincana(@json((string) $gincana->created_at), @json($gincana->duracao));
-        </script>
-        @endif
-        <!-- ...restante do código permanece igual... -->
-        
-        <!-- Lado direito: Saudação mobile + Menu button -->
-        <div class="md:hidden flex items-center gap-2">
+    <nav class="flex items-center justify-between p-2 md:p-4 bg-white shadow-md z-50 relative">
+        <!-- Ações à direita (mobile + desktop) -->
+        <div class="flex items-center gap-2 md:gap-4">
             @auth
-                <!-- Saudação compacta para mobile -->
-                <span class="text-gray-600 text-xs">
-                    👋 Olá <strong class="text-gray-800">{{ Auth::user()->name }}</strong>
-                </span>
-            @endauth
-            <button id="mobile-menu-btn" class="text-gray-600 hover:text-gray-800 p-2">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
-        </div>
-
-        <!-- Desktop menu -->
-        <div class="hidden md:flex items-center gap-6">
-            @auth
-                <!-- Menu principal para usuários autenticados -->
-                <a href="{{ route('home') }}" class="text-gray-600 hover:text-gray-800 hover:bg-gray-100 px-3 py-2 rounded-md transition-all duration-200 {{ request()->routeIs('home') ? 'text-gray-900 bg-gray-100 font-medium' : '' }}">
-                    Jogar
-                </a>
-                
-                <!-- Dropdown Gincanas -->
-                <div class="relative group">
-                    <button class="text-gray-600 hover:text-gray-800 hover:bg-gray-100 px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-1 {{ request()->routeIs('gincana.*') ? 'text-gray-900 bg-gray-100 font-medium' : '' }}">
-                        Gincanas
-                        <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                <!-- Sino de notificações (sempre visível) -->
+                <div class="relative">
+                    <button id="notif-bell" class="relative p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Notificações">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.243A4.5 4.5 0 0112 21a4.5 4.5 0 01-2.857-3.757M5.5 9.5a6.5 6.5 0 1113 0c0 2.102.574 3.353 1.18 4.18.322.44.482.66.473.892a.75.75 0 01-.161.454c-.12.155-.365.274-.855.512l-.132.064c-.92.447-1.343.67-1.57.993a1.8 1.8 0 00-.285.67c-.07.338-.07.704-.07 1.437v.1a.75.75 0 01-.75.75h-8.2a.75.75 0 01-.75-.75v-.1c0-.733 0-1.099-.07-1.437a1.8 1.8 0 00-.285-.67c-.227-.323-.651-.546-1.57-.993l-.132-.064c-.49-.238-.734-.357-.855-.512a.75.75 0 01-.161-.454c-.009-.232.151-.452.473-.892C4.926 12.853 5.5 11.602 5.5 9.5z" />
                         </svg>
+                        <span id="notif-badge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center"></span>
                     </button>
-                    <div class="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                        <a href="{{ route('gincana.create') }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-all duration-200 {{ request()->routeIs('gincana.create') ? 'text-gray-900 bg-gray-100' : '' }}">
-                            Criar Gincana
-                        </a>
-                        <a href="{{ route('gincana.index') }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-all duration-200 {{ request()->routeIs('gincana.index') ? 'text-gray-900 bg-gray-100' : '' }}">
-                            Gincanas que Criei
-                        </a>
-                        <a href="{{ route('gincana.jogadas') }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-all duration-200 {{ request()->routeIs('gincana.jogadas') ? 'text-gray-900 bg-gray-100' : '' }}">
-                            Gincanas que Joguei
-                        </a>
-                        <a href="{{ route('gincana.disponiveis') }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-all duration-200 {{ request()->routeIs('gincana.disponiveis') ? 'text-gray-900 bg-gray-100' : '' }}">
-                            Gincanas Disponíveis
-                        </a>
+                    <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 max-h-[70vh] overflow-y-auto bg-white border border-gray-200 shadow-lg rounded-lg text-sm z-50">
+                        <div class="flex items-center justify-between px-3 py-2 border-b">
+                            <span class="font-semibold">Notificações</span>
+                            <button id="notif-mark-all" class="text-xs text-blue-600 hover:underline">Marcar todas</button>
+                        </div>
+                        <ul id="notif-list" class="divide-y divide-gray-100">
+                            <li class="p-3 text-gray-500 text-xs">Carregando...</li>
+                        </ul>
+                        <div class="p-2 text-center">
+                            <button id="notif-reload" class="text-xs text-gray-500 hover:text-gray-700">Atualizar</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Dropdown Rankings -->
-                <div class="relative group">
-                    <button class="text-gray-600 hover:text-gray-800 hover:bg-gray-100 px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-1 {{ request()->routeIs('ranking.*') ? 'text-gray-900 bg-gray-100 font-medium' : '' }}">
-                        🏆 Rankings
-                        <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                        <a href="{{ route('ranking.geral') }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-all duration-200 {{ request()->routeIs('ranking.geral') ? 'text-gray-900 bg-gray-100' : '' }}">
-                            🌟 Ranking Geral
-                        </a>
-                        <a href="{{ route('ranking.index') }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-all duration-200 {{ request()->routeIs('ranking.index') ? 'text-gray-900 bg-gray-100' : '' }}">
-                            📊 Por Gincana
+                <!-- Avatar Emoji / Menu usuário -->
+                <div class="relative">
+                    <button id="user-menu-btn" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 text-xl" aria-haspopup="true" aria-expanded="false">🙂</button>
+                    <div id="user-menu-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border border-gray-200 shadow-lg rounded-lg text-sm z-50">
+                        <div class="px-4 py-3 border-b">
+                            <div class="text-xs text-gray-500">Olá</div>
+                            <div class="font-semibold truncate">{{ Auth::user()->name }}</div>
+                        </div>
+                        <ul class="py-1">
+                            <li><a href="{{ route('profile.edit') ?? '#' }}" class="block px-4 py-2 hover:bg-gray-50">Perfil</a></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="w-full text-left px-4 py-2 hover:bg-gray-50">Sair</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            @else
+                <a href="{{ route('login') }}" class="px-3 py-1 text-sm font-medium text-blue-600 hover:underline">Entrar</a>
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="px-3 py-1 text-sm font-medium text-gray-600 hover:underline">Registrar</a>
+                @endif
+            @endauth
+
+            <!-- Botão menu lateral antigo (mantido) -->
+            <button id="mobile-menu-btn" class="md:hidden p-2 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+        <!-- Menus maiores (desktop) permanecem com classes utilitárias -->
+        <!-- (Se quiser reintroduzir os menus de "Gincanas" e "Rankings" aqui, pode mover o bloco antigo antes do sino) -->
                         </a>
                     </div>
                 </div>
@@ -293,90 +245,97 @@
     </script>
 
     <script>
-    // Mobile menu functionality - funciona para todos os usuários
+    // Interação sino + avatar + polling
     document.addEventListener('DOMContentLoaded', function() {
-        // Polling de notificações internas
-        if (window.LaravelIsAuthenticated) {
-            const badge = document.getElementById('notif-badge');
-            const list = document.getElementById('notif-list');
-            const empty = document.getElementById('notif-empty');
-            const markAllBtn = document.getElementById('notif-mark-all');
-            async function fetchNotifs(){
-                try {
-                    const r = await fetch('/notifications');
-                    if(!r.ok) return; 
-                    const data = await r.json();
-                    const count = data.unread_count || 0;
-                    if(count>0){
-                        badge.textContent = count>99?'99+':count;
-                        badge.classList.remove('hidden');
-                    } else {
-                        badge.classList.add('hidden');
-                    }
-                    // Render
-                    list.querySelectorAll('li').forEach(li=>li.remove());
-                    if(data.notifications.length===0){
-                        const li=document.createElement('li');
-                        li.className='p-3 text-gray-400 italic';
-                        li.textContent='Sem novas notificações';
-                        list.appendChild(li);
-                    } else {
-                        data.notifications.forEach(n=>{
-                            const li=document.createElement('li');
-                            li.className='p-3 hover:bg-gray-50 cursor-pointer';
-                            li.innerHTML=`<div class='font-medium text-gray-800'>${n.autor||'Alguém'} comentou</div>
-                                <div class='text-gray-600 line-clamp-2'>${(n.conteudo||'').substring(0,120)}</div>
-                                <div class='text-xs text-gray-400 mt-1'>${n.gincana_nome?('Gincana: '+n.gincana_nome):''}</div>`;
-                            li.addEventListener('click', async () => {
-                                if(n.id){ await fetch('/notifications/read', {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}, body: JSON.stringify({id:n.id})}); }
-                                if(n.gincana_id) window.location.href='/gincana/'+n.gincana_id+'/jogar';
-                                else if(n.url) window
-                            });
-                            list.appendChild(li);
-                        });
-                    }
-                } catch(e){ console.warn('Falha notificações', e); }
-            }
-            fetchNotifs();
-            setInterval(fetchNotifs, 15000); // 15s
-            markAllBtn?.addEventListener('click', async ()=>{
-                await fetch('/notifications/read',{method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}, body: '{}'});
-                fetchNotifs();
-            });
-        }
+        const notifBtn = document.getElementById('notif-bell');
+        const notifDropdown = document.getElementById('notif-dropdown');
+        const notifList = document.getElementById('notif-list');
+        const notifBadge = document.getElementById('notif-badge');
+        const markAllBtn = document.getElementById('notif-mark-all');
+        const reloadBtn = document.getElementById('notif-reload');
+        const userBtn = document.getElementById('user-menu-btn');
+        const userDropdown = document.getElementById('user-menu-dropdown');
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         const mobileMenuPanel = document.getElementById('mobile-menu-panel');
         const mobileMenuClose = document.getElementById('mobile-menu-close');
 
-        function openMobileMenu() {
-            mobileMenu?.classList.remove('hidden');
-            setTimeout(() => {
-                mobileMenuPanel?.classList.remove('translate-x-full');
-            }, 10);
+        function hide(el){ if(el && !el.classList.contains('hidden')) el.classList.add('hidden'); }
+        function toggle(el){ el.classList.toggle('hidden'); }
+
+        async function fetchNotifs(){
+            if(!window.LaravelIsAuthenticated) return;
+            try {
+                const r = await fetch('/notifications');
+                if(!r.ok) return;
+                const data = await r.json();
+                // data esperado: { unread_count, notifications: [...] }
+                const notifs = data.notifications || [];
+                const unread = data.unread_count || 0;
+                if(unread>0){
+                    notifBadge.textContent = unread>99?'99+':unread;
+                    notifBadge.classList.remove('hidden');
+                } else {
+                    notifBadge.classList.add('hidden');
+                }
+                notifList.innerHTML = '';
+                if(notifs.length===0){
+                    notifList.innerHTML = '<li class="p-3 text-center text-xs text-gray-400">Sem notificações</li>';
+                } else {
+                    notifs.forEach(n => {
+                        const li = document.createElement('li');
+                        li.className = 'p-3 hover:bg-gray-50 cursor-pointer notif-item';
+                        li.dataset.id = n.id;
+                        li.innerHTML = `<div class='text-xs text-gray-400 mb-0.5'>${(new Date(n.created_at)).toLocaleTimeString()}</div>
+                                        <div class='font-medium text-gray-800 mb-0.5'>${n.autor||'Alguém'} comentou</div>
+                                        <div class='text-gray-600 text-sm'>${(n.conteudo||'').substring(0,120)}</div>
+                                        <div class='text-xs text-gray-400 mt-1'>${n.gincana_nome?('Gincana: '+n.gincana_nome):''}</div>`;
+                        li.addEventListener('click', async () => {
+                            if(n.id){ await fetch('/notifications/read', {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}, body: JSON.stringify({id:n.id})}); }
+                            // Não redireciona mais.
+                            fetchNotifs();
+                        });
+                        notifList.appendChild(li);
+                    });
+                }
+            } catch(e){ /* silencia */ }
         }
 
-        function closeMobileMenu() {
-            mobileMenuPanel?.classList.add('translate-x-full');
-            setTimeout(() => {
-                mobileMenu?.classList.add('hidden');
-            }, 300);
+        markAllBtn?.addEventListener('click', async (e)=>{
+            e.preventDefault();
+            await fetch('/notifications/read',{method:'POST', headers:{'X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});
+            fetchNotifs();
+        });
+        reloadBtn?.addEventListener('click', (e)=>{ e.preventDefault(); fetchNotifs(); });
+
+        document.addEventListener('click', (e) => {
+            // Sino
+            if(notifBtn && notifBtn.contains(e.target)) {
+                toggle(notifDropdown);
+                if(!notifDropdown.classList.contains('hidden')) fetchNotifs();
+            } else if(notifDropdown && !notifDropdown.contains(e.target) && !notifBtn.contains(e.target)) {
+                hide(notifDropdown);
+            }
+            // User menu
+            if(userBtn && userBtn.contains(e.target)) {
+                toggle(userDropdown);
+            } else if(userDropdown && !userDropdown.contains(e.target) && !userBtn.contains(e.target)) {
+                hide(userDropdown);
+            }
+        });
+
+        if(window.LaravelIsAuthenticated){
+            fetchNotifs();
+            setInterval(fetchNotifs, 15000);
+            document.addEventListener('visibilitychange', () => { if(!document.hidden) fetchNotifs(); });
         }
 
+        function openMobileMenu(){ mobileMenu?.classList.remove('hidden'); setTimeout(()=> mobileMenuPanel?.classList.remove('translate-x-full'), 10); }
+        function closeMobileMenu(){ mobileMenuPanel?.classList.add('translate-x-full'); setTimeout(()=> mobileMenu?.classList.add('hidden'), 300); }
         mobileMenuBtn?.addEventListener('click', openMobileMenu);
         mobileMenuClose?.addEventListener('click', closeMobileMenu);
-        mobileMenu?.addEventListener('click', function(e) {
-            if (e.target === mobileMenu) {
-                closeMobileMenu();
-            }
-        });
-
-        // Close mobile menu on window resize to desktop
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 768) {
-                closeMobileMenu();
-            }
-        });
+        mobileMenu?.addEventListener('click', (e)=>{ if(e.target===mobileMenu) closeMobileMenu(); });
+        window.addEventListener('resize', ()=>{ if(window.innerWidth>=768) closeMobileMenu(); });
     });
     </script>
 @endif
