@@ -4,10 +4,43 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Gincana;
+use App\Models\Participacao; // Adicionado para clareza
 use Illuminate\Support\Facades\Auth;
 
 class GincanaController extends Controller
 {
+    /**
+     * Exibe a página inicial com as gincanas públicas.
+     * Corresponde à lógica anterior da função global getGameLocations().
+     *
+     * @return \Illuminate\View\View
+     */
+    public function welcome()
+    {
+        $locations = [];
+        
+        // Buscar apenas os locais principais das gincanas públicas
+        $gincanas = Gincana::where('privacidade', 'publica')->get();
+        foreach ($gincanas as $gincana) {
+            $locations[] = [
+                'lat' => (float) $gincana->latitude,
+                'lng' => (float) $gincana->longitude,
+                'name' => $gincana->nome,
+                'gincana_id' => $gincana->id,
+                'contexto' => $gincana->contexto
+            ];
+        }
+        
+        // Se não houver gincanas, retornar um marcador especial para exibir alerta no front-end
+        if (empty($locations)) {
+            $locations[] = [
+                'no_gincana' => true
+            ];
+        }
+        
+        return view('welcome', compact('locations'));
+    }
+
     // Exibe o formulário de criação
     public function create()
     {
@@ -75,7 +108,7 @@ class GincanaController extends Controller
         $jaJogou = false;
         
         if ($user) {
-            $jaJogou = \App\Models\Participacao::where('user_id', $user->id)
+            $jaJogou = Participacao::where('user_id', $user->id) // Usando o 'use' adicionado
                 ->where('gincana_id', $gincana->id)
                 ->exists();
         }
@@ -93,7 +126,7 @@ class GincanaController extends Controller
         $userId = Auth::id();
         
         // Método mais direto: buscar participações e então carregar as gincanas
-        $participacoes = \App\Models\Participacao::where('user_id', $userId)
+        $participacoes = Participacao::where('user_id', $userId) // Usando o 'use' adicionado
             ->with(['gincana.user'])
             ->get();
         
@@ -127,7 +160,7 @@ class GincanaController extends Controller
         $user = auth()->user();
         $jaJogou = false;
         if ($user) {
-            $jaJogou = \App\Models\Participacao::where('user_id', $user->id)
+            $jaJogou = Participacao::where('user_id', $user->id) // Usando o 'use' adicionado
                 ->where('gincana_id', $gincana->id)
                 ->exists();
         }

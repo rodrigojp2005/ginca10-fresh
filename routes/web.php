@@ -6,9 +6,9 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\ComentarioController;
-use App\Models\Gincana;
+use App\Models\Gincana; // Pode remover se não for mais usado diretamente aqui
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; // Pode remover se não for mais usado diretamente aqui
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -22,37 +22,11 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-// Função para carregar locais de jogo
-function getGameLocations() {
-    $locations = [];
-    
-    // Buscar apenas os locais principais das gincanas públicas criadas pelos usuários
-    $gincanas = Gincana::where('privacidade', 'publica')->get();
-    foreach ($gincanas as $gincana) {
-        $locations[] = [
-            'lat' => (float) $gincana->latitude,
-            'lng' => (float) $gincana->longitude,
-            'name' => $gincana->nome,
-            'gincana_id' => $gincana->id,
-            'contexto' => $gincana->contexto
-        ];
-    }
-    
-    // Se não houver gincanas criadas pelos usuários, retornar um marcador especial para exibir alerta no front-end
-    if (empty($locations)) {
-        $locations[] = [
-            'no_gincana' => true
-        ];
-    }
-    
-    return $locations;
-}
+// A função getGameLocations() foi removida daqui.
+// A lógica agora está no método welcome() do GincanaController.
 
-// Rota principal - funciona para visitantes e usuários logados
-Route::get('/', function (Request $request) {
-    $locations = getGameLocations();
-    return view('welcome', compact('locations'));
-})->middleware('guest')->name('home');
+// Rota principal - agora aponta para o GincanaController
+Route::get('/', [GincanaController::class, 'welcome'])->middleware('guest')->name('home');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
