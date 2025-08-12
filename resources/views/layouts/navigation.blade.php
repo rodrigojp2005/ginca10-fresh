@@ -14,9 +14,10 @@
                 <!-- Sino de notificações (sempre visível) -->
                 <div class="relative">
                     <button id="notif-bell" class="relative p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Notificações">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <svg id="notif-bell-svg" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.243A4.5 4.5 0 0112 21a4.5 4.5 0 01-2.857-3.757M5.5 9.5a6.5 6.5 0 1113 0c0 2.102.574 3.353 1.18 4.18.322.44.482.66.473.892a.75.75 0 01-.161.454c-.12.155-.365.274-.855.512l-.132.064c-.92.447-1.343.67-1.57.993a1.8 1.8 0 00-.285.67c-.07.338-.07.704-.07 1.437v.1a.75.75 0 01-.75.75h-8.2a.75.75 0 01-.75-.75v-.1c0-.733 0-1.099-.07-1.437a1.8 1.8 0 00-.285-.67c-.227-.323-.651-.546-1.57-.993l-.132-.064c-.49-.238-.734-.357-.855-.512a.75.75 0 01-.161-.454c-.009-.232.151-.452.473-.892C4.926 12.853 5.5 11.602 5.5 9.5z" />
                         </svg>
+                        <img id="notif-bell-gif" src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExajB1cXY3OWE4aHFrZncydjlvb3ZyNjEyeWxhZ2c3Mzd2anl3MDRnNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Jc3dFKDbucGhyIm90X/giphy.gif" alt="Sem notificações" class="h-6 w-6 hidden object-contain" loading="lazy" />
                         <span id="notif-badge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center"></span>
                         <!-- Indicador neutro quando não há notificações -->
                         <span id="notif-dot" class="hidden absolute -top-0.5 -right-0.5 w-[10px] h-[10px] bg-gray-300 rounded-full"></span>
@@ -217,7 +218,9 @@
         const notifBtn = document.getElementById('notif-bell');
         const notifDropdown = document.getElementById('notif-dropdown');
         const notifList = document.getElementById('notif-list');
-        const notifBadge = document.getElementById('notif-badge');
+    const notifBadge = document.getElementById('notif-badge');
+    const notifBellSvg = document.getElementById('notif-bell-svg');
+    const notifBellGif = document.getElementById('notif-bell-gif');
         const notifDot = document.getElementById('notif-dot');
         const markAllBtn = document.getElementById('notif-mark-all');
         const reloadBtn = document.getElementById('notif-reload');
@@ -244,20 +247,17 @@
                     notifBadge.textContent = unread>99?'99+':unread;
                     notifBadge.classList.remove('hidden');
                     notifDot?.classList.add('hidden');
+                    notifBellSvg?.classList.remove('hidden');
+                    notifBellGif?.classList.add('hidden');
                 } else {
                     notifBadge.classList.add('hidden');
                     notifDot?.classList.remove('hidden');
+                    notifBellSvg?.classList.add('hidden');
+                    notifBellGif?.classList.remove('hidden');
                 }
                 notifList.innerHTML = '';
                 if(notifs.length===0){
-                    notifList.innerHTML = `
-                        <li class="p-4 text-center">
-                            <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExajB1cXY3OWE4aHFrZncydjlvb3ZyNjEyeWxhZ2c3Mzd2anl3MDRnNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Jc3dFKDbucGhyIm90X/giphy.gif"
-                                 alt="Sem notificações"
-                                 class="mx-auto w-40 h-40 object-contain opacity-80"
-                                 loading="lazy" />
-                            <div class="text-xs text-gray-400 mt-2">Sem notificações</div>
-                        </li>`;
+                    notifList.innerHTML = '<li class="p-3 text-center text-xs text-gray-400">Sem notificações</li>';
                 } else {
                     notifs.forEach(n => {
                         const li = document.createElement('li');
