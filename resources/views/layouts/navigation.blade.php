@@ -14,10 +14,8 @@
                 <!-- Sino de notificações (sempre visível) -->
                 <div class="relative">
                     <button id="notif-bell" class="relative p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Notificações">
-                        <img id="notif-bell-gif" src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExajB1cXY3OWE4aHFrZncydjlvb3ZyNjEyeWxhZ2c3Mzd2anl3MDRnNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Jc3dFKDbucGhyIm90X/giphy.gif" alt="Sem notificações" class="h-6 w-8 hidden object-contain" loading="lazy" />
+                        <img id="notif-bell-gif" src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExajB1cXY3OWE4aHFrZncydjlvb3ZyNjEyeWxhZ2c3Mzd2anl3MDRnNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Jc3dFKDbucGhyIm90X/giphy.gif" alt="Notificações" class="h-7 w-7 object-contain" loading="lazy" />
                         <span id="notif-badge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center"></span>
-                        <!-- Indicador neutro quando não há notificações -->
-                        <span id="notif-dot" class="hidden absolute -top-0.5 -right-0.5 w-[10px] h-[10px] bg-gray-300 rounded-full"></span>
                     </button>
                     <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 max-h-[70vh] overflow-y-auto bg-white border border-gray-200 shadow-lg rounded-lg text-sm z-50">
                         <div class="flex items-center justify-between px-3 py-2 border-b">
@@ -36,7 +34,7 @@
                 <!-- Avatar Emoji / Menu usuário -->
                 <div class="relative">
                     <button id="user-menu-btn" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 text-xl" aria-haspopup="true" aria-expanded="false">🙂</button>
-                    <div id="user-menu-dropdown" class="hidden absolute right-0 mt-2 w-84 bg-white border border-gray-200 shadow-lg rounded-lg text-sm z-50">
+                    <div id="user-menu-dropdown" class="hidden absolute right-0 mt-2 w-72 sm:w-80 bg-white border border-gray-200 shadow-lg rounded-lg text-sm z-50">
                         <div class="px-4 py-3 border-b">
                             <div class="text-xs text-gray-500">Olá</div>
                             <div class="font-semibold truncate">{{ Auth::user()->name }}</div>
@@ -214,10 +212,9 @@
     document.addEventListener('DOMContentLoaded', function() {
         const notifBtn = document.getElementById('notif-bell');
         const notifDropdown = document.getElementById('notif-dropdown');
-        const notifList = document.getElementById('notif-list');
+    const notifList = document.getElementById('notif-list');
     const notifBadge = document.getElementById('notif-badge');
     const notifBellGif = document.getElementById('notif-bell-gif');
-        const notifDot = document.getElementById('notif-dot');
         const markAllBtn = document.getElementById('notif-mark-all');
         const reloadBtn = document.getElementById('notif-reload');
         const userBtn = document.getElementById('user-menu-btn');
@@ -242,14 +239,8 @@
                 if(unread>0){
                     notifBadge.textContent = unread>99?'99+':unread;
                     notifBadge.classList.remove('hidden');
-                    notifDot?.classList.add('hidden');
-                    notifBellSvg?.classList.remove('hidden');
-                    notifBellGif?.classList.add('hidden');
                 } else {
                     notifBadge.classList.add('hidden');
-                    notifDot?.classList.remove('hidden');
-                    notifBellSvg?.classList.add('hidden');
-                    notifBellGif?.classList.remove('hidden');
                 }
                 notifList.innerHTML = '';
                 if(notifs.length===0){
