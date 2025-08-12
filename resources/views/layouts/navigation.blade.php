@@ -250,7 +250,14 @@
                 }
                 notifList.innerHTML = '';
                 if(notifs.length===0){
-                    notifList.innerHTML = '<li class="p-3 text-center text-xs text-gray-400">Sem notificações</li>';
+                    notifList.innerHTML = `
+                        <li class="p-4 text-center">
+                            <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExajB1cXY3OWE4aHFrZncydjlvb3ZyNjEyeWxhZ2c3Mzd2anl3MDRnNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Jc3dFKDbucGhyIm90X/giphy.gif"
+                                 alt="Sem notificações"
+                                 class="mx-auto w-40 h-40 object-contain opacity-80"
+                                 loading="lazy" />
+                            <div class="text-xs text-gray-400 mt-2">Sem notificações</div>
+                        </li>`;
                 } else {
                     notifs.forEach(n => {
                         const li = document.createElement('li');
