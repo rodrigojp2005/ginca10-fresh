@@ -34,10 +34,10 @@
                 <!-- Avatar Emoji / Menu usuário -->
                 <div class="relative">
                     <button id="user-menu-btn" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 text-xl" aria-haspopup="true" aria-expanded="false">🙂</button>
-                    <div id="user-menu-dropdown" class="hidden absolute right-0 mt-2 w-72 sm:w-80 bg-white border border-gray-200 shadow-lg rounded-lg text-sm z-50">
+                    <div id="user-menu-dropdown" class="hidden absolute right-0 mt-2 w-auto min-w-[18rem] sm:min-w-[20rem] max-w-[90vw] bg-white border border-gray-200 shadow-lg rounded-lg text-sm z-50">
                         <div class="px-4 py-3 border-b">
                             <div class="text-xs text-gray-500">Olá</div>
-                            <div class="font-semibold truncate">{{ Auth::user()->name }}</div>
+                            <div class="font-semibold whitespace-normal break-words">{{ Auth::user()->name }}</div>
                         </div>
                         <ul class="py-1">
                             <li><a href="{{ route('profile.edit') ?? '#' }}" class="block px-4 py-2 hover:bg-gray-50">Perfil</a></li>
