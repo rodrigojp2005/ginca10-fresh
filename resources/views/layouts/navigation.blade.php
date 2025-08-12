@@ -168,17 +168,17 @@
             title: 'Como Jogar',
             html: `
                 <div class="text-left">
-    <h4 class="font-bold mb-2">🎯 Objetivo do Jogo:</h4>
-    <p class="mb-3">Adivinhe onde está apenas pela imagem do Street View.</p>
+                    <h4 class="font-bold mb-2">🎯 Objetivo do Jogo:</h4>
+                    <p class="mb-3">Adivinhe onde está apenas pela imagem do Street View.</p>
 
-    <h4 class="font-bold mb-2">🎮 Como Jogar</h4>
-    <ul class="list-disc list-inside mb-3 space-y-1">
-        <li>Analise a imagem e busque por pistas</li>
-        <li>Clique em Start e marque o local no mapa</li>
-        <li>Confirme o Palpite, você tem 5 tentativas</li>
-        <li>Caso erre, leia a dica da distância e direção!</li>
-    </ul>
-</div>
+                    <h4 class="font-bold mb-2">🎮 Como Jogar</h4>
+                    <ul class="list-disc list-inside mb-3 space-y-1">
+                        <li>Analise a imagem e busque por pistas</li>
+                        <li>Clique em Start e marque o local no mapa</li>
+                        <li>Confirme o Palpite, você tem 5 tentativas</li>
+                        <li>Caso erre, leia a dica da distância e direção!</li>
+                    </ul>
+                </div>
             `,
             icon: 'info',
             confirmButtonText: 'Entendi!',
@@ -218,7 +218,7 @@
         const notifDropdown = document.getElementById('notif-dropdown');
         const notifList = document.getElementById('notif-list');
         const notifBadge = document.getElementById('notif-badge');
-    const notifDot = document.getElementById('notif-dot');
+        const notifDot = document.getElementById('notif-dot');
         const markAllBtn = document.getElementById('notif-mark-all');
         const reloadBtn = document.getElementById('notif-reload');
         const userBtn = document.getElementById('user-menu-btn');

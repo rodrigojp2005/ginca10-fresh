@@ -451,11 +451,6 @@ function updateUI() {
     document.getElementById('attempts').textContent = attempts;
     document.getElementById('round').textContent = round;
 }
-// window.onload = function() {
-//     if (typeof google !== 'undefined') {
-//         initGame();
-//     }
-// };
 
 window.addEventListener("load", () => {
     // Verificar primeiro se há gincanas disponíveis

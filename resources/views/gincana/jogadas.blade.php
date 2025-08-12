@@ -8,17 +8,7 @@
 <div class="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
     <div class="flex-1 max-w-md mx-auto">
 @endif
-        <!-- Header -->
-        <!-- <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">
-                🎮 Gincanas Jogadas!
-            </h1>
-            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                Aqui estão todas as gincanas que você participou. Clique em uma gincana para ver o ranking!
-            </p>
-        </div> -->
-
-        @if($gincanasJogadas->count() > 0)
+    @if($gincanasJogadas->count() > 0)
         <div class="text-center mb-8">
             <h1 class="text-4xl font-bold text-gray-900 mb-4">
                 🎮 Gincanas Jogadas!
@@ -126,9 +116,6 @@
                     🎮
                     <br> Nenhuma Gincana Jogada Ainda!
                 </h1>
-                <!-- <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                    Aqui estão todas as gincanas que você participou. Clique em uma gincana para ver o ranking!
-                </p> -->
             </div>  
             <div class="text-center py-4">
                 <div class="max-w-md mx-auto">                  

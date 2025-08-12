@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 @if($gincanasDisponiveis->count() > 0)
 <div class="bg-gradient-to-br from-green-50 to-blue-100 py-8">
@@ -91,10 +90,6 @@
                                         <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2R5aDI5bnVkNHAyMG5zM2tnNHVlOGY5NjA1ZW04ZzZrNzNpZGx4biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/XfmFPcUZTddaFZhLgt/giphy.gif" alt="Compartilhar" style="width: 20px; height: 20px;">
                                         Compartilhar com amigo
                                     </button>
-                                <!-- <a href="{{ route('gincana.show', $gincana) }}" 
-                                   class="flex-1 bg-gray-600 text-white text-center px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 text-sm font-medium">
-                                    👁️ Ver Detalhes
-                                </a> -->
                             </div>
                         </div>
                     </div>

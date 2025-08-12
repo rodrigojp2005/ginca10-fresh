@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('title')
     @auth
         Gincaneiros - Crie sua gincana!
@@ -32,12 +31,6 @@
             <button id="showMapBtn" class="btn" style="padding: 0; border: none; background: none; width: 100%; max-width: 220px;">
             <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbjFnOGtlcnl5dmpveGJydTNxb2twNGxudXB3Nm8wMjNlMnI2bDBrZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/PrfN2Hqu24ln2eAaOS/giphy.gif" alt="JOGAR" style="width: 100%; height: auto; max-width: 180px; max-height: 120px; display: block; margin: 0 auto;">
             </button>
-            <!-- @auth
-            <a href="{{ route('gincana.create') }}" class="btn" style="padding: 0; border: none; background: none; width: 100%; max-width: 220px; display: block;">
-            <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjdjcmlsMGNhajk5bDAzdWNpeDhqd3VubnRmczMyZmZ0YW1xNGEwbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/OZ9AcS5JsCg9YZfsXO/giphy.gif" alt="CRIAR" style="width: 100%; height: auto; max-width: 80px; max-height: 80px; display: block; margin: 0 auto;">
-            </a>
-            @endauth -->
-
         </div>
         <style>
             @media (max-width: 600px) {
@@ -50,16 +43,6 @@
             }
             }
         </style>
-        
-        <!-- Controles condicionais baseados no status de autenticação -->
-         <!-- @auth
-            <a href="{{ route('gincana.create') }}" class="btn btn-primary" style="margin-left: 10px; background-color: #6b7280; display: flex; align-items: center;">
-                Criar Gincana
-            </a>
-             <a href="{{ route('gincana.index') }}" class="btn btn-secondary" style="margin-left: 10px; background-color: #9ca3af;">
-                Minhas Gincanas...
-            </a> 
-        @endauth -->
     </div>
 
     <!-- Slider do mapa -->
@@ -87,9 +70,6 @@
             <button id="confirmGuessBtn" class="btn btn-success" disabled>
                 🎯 Confirmar Palpite
             </button>
-            <!-- <button id="cancelGuessBtn" class="btn" style="background-color: #6c757d;">
-                ↩️ Voltar
-            </button> -->
         </div>
     </div>
 
