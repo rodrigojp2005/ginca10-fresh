@@ -55,11 +55,6 @@
                 <!-- Links informativos (recolhidos) -->
                 <a href="#" onclick="event.preventDefault(); mostrarComoJogar()" class="hidden md:inline-block px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md">Como Jogar</a>
                 <a href="#" onclick="event.preventDefault(); mostrarSobreJogo()" class="hidden md:inline-block px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md">Sobre</a>
-            @else
-                <a href="{{ route('login') }}" class="px-3 py-1 text-sm font-medium text-blue-600 hover:underline">Entrar</a>
-                @if (Route::has('register'))
-                    <a href="{{ route('register') }}" class="px-3 py-1 text-sm font-medium text-gray-600 hover:underline">Registrar</a>
-                @endif
             @endauth
 
             <!-- Botão menu lateral antigo (mantido) -->
