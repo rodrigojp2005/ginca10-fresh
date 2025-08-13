@@ -6,21 +6,42 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('app.name', 'Gincaneiros - Jogo de Localização'))</title>
     <meta name="theme-color" content="#2563eb" />
-    <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="/images/gincaneiros_logo.png">
+  <link rel="manifest" href="/manifest.webmanifest?v=2025-08-13-1" crossorigin="use-credentials">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600&display=swap" rel="stylesheet" />
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Google Maps API -->
+  <!-- Google Maps API -->
     <script async src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=geometry&loading=async"></script>
     @vite(['resources/css/app.css', 'resources/css/game.css', 'resources/js/app.js', 'resources/js/game.js'])
     @stack('styles')
     <script>window.LaravelIsAuthenticated = {{ Auth::check() ? 'true' : 'false' }};</script>
     <script>window.APP_VAPID_KEY = '{{ env('VAPID_PUBLIC_KEY') }}';</script>
 <script>
+  // Registra SW com versão para forçar atualização quando o arquivo mudar
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
+    const swVersion = 'v2025-08-13-1';
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js?ver=' + swVersion)
+        .then(reg => {
+          if (reg.waiting) {
+            // SW novo já instalado e aguardando: força ativação
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+        })
+        .catch(console.error);
+    });
+    // Mensagem para pular waiting quando enviado pelo app
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'RELOAD_PAGE') {
+        window.location.reload();
+      }
+    });
   }
 </script>
 

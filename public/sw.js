@@ -1,9 +1,22 @@
+const VERSION = 'v2025-08-13-1';
+
 self.addEventListener('install', event => {
+  // Força a ativação imediata do SW atualizado
+  console.log('[SW] install', VERSION);
   self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
-  clients.claim();
+  console.log('[SW] activate', VERSION);
+  // Garante que o SW controle todas as abas imediatamente
+  event.waitUntil((async () => {
+    await clients.claim();
+    // Notifica páginas para recarregar após ativação
+    const allClients = await clients.matchAll({ includeUncontrolled: true });
+    for (const client of allClients) {
+      client.postMessage({ type: 'RELOAD_PAGE', version: VERSION });
+    }
+  })());
 });
 
 self.addEventListener('push', event => {
@@ -32,4 +45,18 @@ self.addEventListener('notificationclick', event => {
       if (clients.openWindow) return clients.openWindow(targetUrl);
     })
   );
+});
+
+// Fetch handler pass-through (necessário para critérios de instalabilidade em alguns navegadores)
+self.addEventListener('fetch', event => {
+  // Não intercepta; apenas passa adiante a requisição
+  event.respondWith(fetch(event.request));
+});
+
+// Suporta pular a fase de waiting quando a página solicitar
+self.addEventListener('message', (event) => {
+  if (!event.data) return;
+  if (event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
