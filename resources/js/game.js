@@ -717,83 +717,6 @@ async function loadComments(gincanaId) {
 }
 
 // Função para adicionar comentário
-// window.addComment = async function(gincanaId) {
-//     const textarea = document.getElementById('new-comment');
-//     const conteudo = textarea.value.trim();
-    
-//     if (!conteudo) {
-//         Swal.fire({
-//             icon: 'warning',
-//             title: 'Atenção',
-//             text: 'Digite seu comentário primeiro!',
-//             confirmButtonColor: '#007bff'
-//         });
-//         return;
-//     }
-    
-//     try {
-//         console.log('Enviando comentário para gincana_id:', gincanaId);
-        
-//         const csrfToken = document.querySelector('meta[name="csrf-token"]');
-//         const response = await fetch('/comentarios', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
-//                 'Accept': 'application/json'
-//             },
-//             body: JSON.stringify({
-//                 gincana_id: gincanaId,
-//                 conteudo: conteudo
-//             })
-//         });
-        
-//         // Verificar se a resposta é OK
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
-        
-//         // Verificar se é JSON válido
-//         const textResponse = await response.text();
-//         console.log('Resposta do servidor (comentário):', textResponse.substring(0, 500));
-        
-//         let data;
-//         try {
-//             data = JSON.parse(textResponse);
-//         } catch (jsonError) {
-//             console.error('Erro ao parsear JSON:', jsonError);
-//             console.error('Resposta completa:', textResponse);
-//             throw new Error('Resposta não é um JSON válido');
-//         }
-        
-//         if (data.success) {
-//             textarea.value = '';
-//             loadComments(gincanaId);
-            
-//             Swal.fire({
-//                 toast: true,
-//                 position: 'top-end',
-//                 icon: 'success',
-//                 title: 'Comentário adicionado!',
-//                 showConfirmButton: false,
-//                 timer: 2000
-//             });
-//         } else {
-//             throw new Error(data.message || 'Erro ao adicionar comentário');
-//         }
-        
-//     } catch (error) {
-//         console.error('Erro ao adicionar comentário:', error);
-//         Swal.fire({
-//             icon: 'error',
-//             title: 'Erro',
-//             text: `Não foi possível adicionar seu comentário: ${error.message}`,
-//             confirmButtonColor: '#dc3545'
-//         });
-//     }
-// }
-
-// Função para adicionar comentário
 window.addComment = async function(gincanaId) {
     const textarea = document.getElementById('new-comment');
     const conteudo = textarea.value.trim();
@@ -825,19 +748,25 @@ window.addComment = async function(gincanaId) {
             })
         });
         
-        // Verificar se a resposta é OK (status 2xx)
+        // Verificar se a resposta é OK
         if (!response.ok) {
-            // Se a resposta não for OK, mas o comentário foi salvo,
-            // vamos tratar como sucesso no front-end.
-            // O erro de JSON será pego no catch abaixo.
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
+        // Verificar se é JSON válido
         const textResponse = await response.text();
-        const data = JSON.parse(textResponse); // Esta linha pode falhar e ir para o catch
+        console.log('Resposta do servidor (comentário):', textResponse.substring(0, 500));
+        
+        let data;
+        try {
+            data = JSON.parse(textResponse);
+        } catch (jsonError) {
+            console.error('Erro ao parsear JSON:', jsonError);
+            console.error('Resposta completa:', textResponse);
+            throw new Error('Resposta não é um JSON válido');
+        }
         
         if (data.success) {
-            // Bloco de sucesso original (quando o servidor retorna JSON)
             textarea.value = '';
             loadComments(gincanaId);
             
@@ -854,30 +783,101 @@ window.addComment = async function(gincanaId) {
         }
         
     } catch (error) {
-        // ########## INÍCIO DA MODIFICAÇÃO ##########
-        // ESTE BLOCO AGORA VAI TRATAR O ERRO COMO SUCESSO
-        
-        console.warn('Ocorreu um erro esperado no servidor após salvar o comentário. Tratando como sucesso no front-end.', error);
-        
-        // 1. Limpar a caixa de texto
-        textarea.value = '';
-        
-        // 2. Recarregar a lista de comentários para mostrar o novo
-        loadComments(gincanaId);
-        
-        // 3. Mostrar o pop-up de SUCESSO
+        console.error('Erro ao adicionar comentário:', error);
         Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: 'Comentário adicionado!',
-            showConfirmButton: false,
-            timer: 2000
+            icon: 'error',
+            title: 'Erro',
+            text: `Não foi possível adicionar seu comentário: ${error.message}`,
+            confirmButtonColor: '#dc3545'
         });
-        
-        // ########## FIM DA MODIFICAÇÃO ##########
     }
 }
+
+// Função para adicionar comentário
+// window.addComment = async function(gincanaId) {
+//     const textarea = document.getElementById('new-comment');
+//     const conteudo = textarea.value.trim();
+    
+//     if (!conteudo) {
+//         Swal.fire({
+//             icon: 'warning',
+//             title: 'Atenção',
+//             text: 'Digite seu comentário primeiro!',
+//             confirmButtonColor: '#007bff'
+//         });
+//         return;
+//     }
+    
+//     try {
+//         console.log('Enviando comentário para gincana_id:', gincanaId);
+        
+//         const csrfToken = document.querySelector('meta[name="csrf-token"]');
+//         const response = await fetch('/comentarios', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
+//                 'Accept': 'application/json'
+//             },
+//             body: JSON.stringify({
+//                 gincana_id: gincanaId,
+//                 conteudo: conteudo
+//             })
+//         });
+        
+//         // Verificar se a resposta é OK (status 2xx)
+//         if (!response.ok) {
+//             // Se a resposta não for OK, mas o comentário foi salvo,
+//             // vamos tratar como sucesso no front-end.
+//             // O erro de JSON será pego no catch abaixo.
+//             throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+        
+//         const textResponse = await response.text();
+//         const data = JSON.parse(textResponse); // Esta linha pode falhar e ir para o catch
+        
+//         if (data.success) {
+//             // Bloco de sucesso original (quando o servidor retorna JSON)
+//             textarea.value = '';
+//             loadComments(gincanaId);
+            
+//             Swal.fire({
+//                 toast: true,
+//                 position: 'top-end',
+//                 icon: 'success',
+//                 title: 'Comentário adicionado!',
+//                 showConfirmButton: false,
+//                 timer: 2000
+//             });
+//         } else {
+//             throw new Error(data.message || 'Erro ao adicionar comentário');
+//         }
+        
+//     } catch (error) {
+//         // ########## INÍCIO DA MODIFICAÇÃO ##########
+//         // ESTE BLOCO AGORA VAI TRATAR O ERRO COMO SUCESSO
+        
+//         console.warn('Ocorreu um erro esperado no servidor após salvar o comentário. Tratando como sucesso no front-end.', error);
+        
+//         // 1. Limpar a caixa de texto
+//         textarea.value = '';
+        
+//         // 2. Recarregar a lista de comentários para mostrar o novo
+//         loadComments(gincanaId);
+        
+//         // 3. Mostrar o pop-up de SUCESSO
+//         Swal.fire({
+//             toast: true,
+//             position: 'top-end',
+//             icon: 'success',
+//             title: 'Comentário adicionado!',
+//             showConfirmButton: false,
+//             timer: 2000
+//         });
+        
+//         // ########## FIM DA MODIFICAÇÃO ##########
+//     }
+// }
 
 
 // Função para formatar data
