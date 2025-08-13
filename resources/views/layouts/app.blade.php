@@ -18,6 +18,11 @@
     @stack('styles')
     <script>window.LaravelIsAuthenticated = {{ Auth::check() ? 'true' : 'false' }};</script>
     <script>window.APP_VAPID_KEY = '{{ env('VAPID_PUBLIC_KEY') }}';</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+</script>
 
 </head>
 <body class="bg-gray-100 font-sans antialiased">
@@ -38,5 +43,59 @@
         @include('layouts.footer')
     </div>
 @yield('scripts')
+<style>
+  #install-btn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #2563eb; /* mesmo azul do theme-color */
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 9999;
+  }
+</style>
+
+<button id="install-btn">📲 Instalar Gincaneiros</button>
+
+<script>
+  let deferredPrompt;
+
+  // Detecta Android
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('install-btn').style.display = 'block';
+  });
+
+  document.getElementById('install-btn').addEventListener('click', async () => {
+    document.getElementById('install-btn').style.display = 'none';
+    deferredPrompt.prompt();
+    const choiceResult = await deferredPrompt.userChoice;
+    console.log(choiceResult.outcome);
+    deferredPrompt = null;
+  });
+
+  // Detecta iOS e mostra instruções
+  const isIOS = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+  const isInStandalone = ('standalone' in window.navigator) && window.navigator.standalone;
+
+  if (isIOS && !isInStandalone) {
+    Swal.fire({
+      icon: 'info',
+      title: 'Instalar no iPhone',
+      html: 'Para instalar, toque em <strong>Compartilhar</strong> e escolha <em>Adicionar à Tela de Início</em>.',
+      confirmButtonText: 'Entendi',
+      confirmButtonColor: '#2563eb'
+    });
+  }
+</script>
+
 </body>
 </html>
