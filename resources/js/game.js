@@ -716,7 +716,7 @@ async function loadComments(gincanaId) {
     }
 }
 
-// Função para adicionar comentário
+//Função para adicionar comentário
 window.addComment = async function(gincanaId) {
     const textarea = document.getElementById('new-comment');
     const conteudo = textarea.value.trim();
@@ -793,7 +793,7 @@ window.addComment = async function(gincanaId) {
     }
 }
 
-// Função para adicionar comentário
+// // Função para adicionar comentário
 // window.addComment = async function(gincanaId) {
 //     const textarea = document.getElementById('new-comment');
 //     const conteudo = textarea.value.trim();
