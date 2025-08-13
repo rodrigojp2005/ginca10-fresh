@@ -42,11 +42,20 @@ export async function initPush() {
   if (permission === 'default') permission = await Notification.requestPermission();
   if (permission !== 'granted') return;
   const existing = await reg.pushManager.getSubscription();
-  if (existing) return; // already subscribed
+  // Se a VAPID mudou desde a última vez, re-subscreve para garantir compatibilidade
+  const lastVapid = localStorage.getItem('vapid_pub');
+  if (lastVapid !== vapidPublicKey && existing) {
+    try { await existing.unsubscribe(); } catch (e) { /* noop */ }
+  }
+  if (await reg.pushManager.getSubscription()) {
+    // Já inscrito e VAPID inalterado
+    return;
+  }
   const subscription = await reg.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
   });
+  localStorage.setItem('vapid_pub', vapidPublicKey);
   // send to server
   await fetch('/push/subscribe', {
     method: 'POST',
@@ -55,10 +64,12 @@ export async function initPush() {
   });
 }
 
-// Auto init after load (optional delay)
-window.addEventListener('load', () => {
-  // Only attempt if user seems logged in (presence of meta csrf is enough) and Notification API available
-  if (window.LaravelIsAuthenticated) {
-    initPush();
-  }
-});
+// Auto init: se o load já ocorreu, executa; caso contrário, aguarda o load
+const maybeStart = () => {
+  if (window.LaravelIsAuthenticated) initPush();
+};
+if (document.readyState === 'complete') {
+  setTimeout(maybeStart, 0);
+} else {
+  window.addEventListener('load', maybeStart);
+}
