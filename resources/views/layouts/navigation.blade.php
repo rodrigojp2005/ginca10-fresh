@@ -3,7 +3,7 @@
         <!-- Logo / Brand à esquerda -->
         <div class="flex items-center min-w-0">
             <a href="{{ route('home') }}" class="flex items-center gap-2 font-bold text-lg md:text-xl text-gray-800 hover:text-blue-600 whitespace-nowrap">
-                <span class="text-2xl leading-none">🌞</span>
+                <img src="/images/gincaneiros_logo.png" alt="Gincaneiros" class="h-7 w-7 md:h-8 md:w-8 object-contain" loading="lazy" />
                 <span class="tracking-tight">Gincaneiros</span>
             </a>
         </div>
