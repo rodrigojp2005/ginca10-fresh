@@ -96,6 +96,5 @@
     });
   }
 </script>
-
 </body>
 </html>
