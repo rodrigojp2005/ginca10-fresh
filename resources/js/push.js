@@ -1,7 +1,21 @@
 async function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return null;
   try {
-    return await navigator.serviceWorker.register('/sw.js');
+    const swVersion = 'v2025-08-13-1';
+    const reg = await navigator.serviceWorker.register('/sw.js?ver=' + swVersion);
+    // Se houver SW aguardando, peça para pular waiting
+    if (reg.waiting) {
+      reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    }
+    reg.addEventListener('updatefound', () => {
+      const nw = reg.installing;
+      nw?.addEventListener('statechange', () => {
+        if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+          reg.waiting?.postMessage({ type: 'SKIP_WAITING' });
+        }
+      });
+    });
+    return reg;
   } catch (e) {
     console.error('SW registration failed', e);
     return null;

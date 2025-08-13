@@ -9,14 +9,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   console.log('[SW] activate', VERSION);
   // Garante que o SW controle todas as abas imediatamente
-  event.waitUntil((async () => {
-    await clients.claim();
-    // Notifica páginas para recarregar após ativação
-    const allClients = await clients.matchAll({ includeUncontrolled: true });
-    for (const client of allClients) {
-      client.postMessage({ type: 'RELOAD_PAGE', version: VERSION });
-    }
-  })());
+  event.waitUntil(clients.claim());
 });
 
 self.addEventListener('push', event => {

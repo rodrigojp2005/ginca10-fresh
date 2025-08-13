@@ -21,29 +21,7 @@
     @vite(['resources/css/app.css', 'resources/css/game.css', 'resources/js/app.js', 'resources/js/game.js'])
     @stack('styles')
     <script>window.LaravelIsAuthenticated = {{ Auth::check() ? 'true' : 'false' }};</script>
-    <script>window.APP_VAPID_KEY = '{{ env('VAPID_PUBLIC_KEY') }}';</script>
-<script>
-  // Registra SW com versão para forçar atualização quando o arquivo mudar
-  if ('serviceWorker' in navigator) {
-    const swVersion = 'v2025-08-13-1';
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js?ver=' + swVersion)
-        .then(reg => {
-          if (reg.waiting) {
-            // SW novo já instalado e aguardando: força ativação
-            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-          }
-        })
-        .catch(console.error);
-    });
-    // Mensagem para pular waiting quando enviado pelo app
-    navigator.serviceWorker.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'RELOAD_PAGE') {
-        window.location.reload();
-      }
-    });
-  }
-</script>
+  <script>window.APP_VAPID_KEY = '{{ env('VAPID_PUBLIC_KEY') }}';</script>
 
 </head>
 <body class="bg-gray-100 font-sans antialiased">
