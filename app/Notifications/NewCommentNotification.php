@@ -20,20 +20,11 @@ class NewCommentNotification extends Notification implements ShouldQueue
 
     public function via(object $notifiable): array
     {
-        return ['database', WebPushChannel::class];
+        // Não gravar uma linha por comentário na tabela notifications para evitar poluição
+        return [WebPushChannel::class];
     }
 
-    public function toDatabase(object $notifiable): array
-    {
-        return [
-            'type' => 'comment',
-            'gincana_id' => $this->comentario->gincana_id,
-            'comentario_id' => $this->comentario->id,
-            'conteudo' => $this->comentario->conteudo,
-            'autor' => $this->comentario->user?->name,
-            'gincana_nome' => $this->comentario->gincana?->nome,
-        ];
-    }
+    // Removido toDatabase: usaremos tabela agregada própria
 
     public function toWebPush(object $notifiable, object $notification = null): WebPushMessage
     {

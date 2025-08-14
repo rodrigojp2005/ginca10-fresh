@@ -77,7 +77,7 @@ Route::middleware('auth')->group(function () {
         return response()->json(['sent' => true]);
     });
 
-    // Notificações internas
+    // Notificações (agregadas por gincana)
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
     Route::post('/notifications/read', [\App\Http\Controllers\NotificationController::class, 'markRead']);
 });

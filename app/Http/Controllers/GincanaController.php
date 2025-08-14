@@ -108,6 +108,10 @@ class GincanaController extends Controller
         $jaJogou = false;
         
         if ($user) {
+            // Ao entrar na página da gincana, zera contador agregado dessa gincana
+            \App\Models\GincanaCommentNotification::where('user_id', $user->id)
+                ->where('gincana_id', $gincana->id)
+                ->update(['unread_count' => 0]);
             $jaJogou = Participacao::where('user_id', $user->id) // Usando o 'use' adicionado
                 ->where('gincana_id', $gincana->id)
                 ->exists();
@@ -160,6 +164,10 @@ class GincanaController extends Controller
         $user = auth()->user();
         $jaJogou = false;
         if ($user) {
+            // Ao entrar em jogar, também zera contador
+            \App\Models\GincanaCommentNotification::where('user_id', $user->id)
+                ->where('gincana_id', $gincana->id)
+                ->update(['unread_count' => 0]);
             $jaJogou = Participacao::where('user_id', $user->id) // Usando o 'use' adicionado
                 ->where('gincana_id', $gincana->id)
                 ->exists();

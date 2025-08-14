@@ -1,7 +1,7 @@
 async function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return null;
   try {
-    const swVersion = 'v2025-08-13-1';
+  const swVersion = 'v2025-08-14-1';
     const reg = await navigator.serviceWorker.register('/sw.js?ver=' + swVersion);
     // Se houver SW aguardando, peça para pular waiting
     if (reg.waiting) {

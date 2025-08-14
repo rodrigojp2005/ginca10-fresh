@@ -52,26 +52,52 @@ class ComentarioController extends Controller
 
             $comentario->load('user:id,name');
 
-            // Notificar participantes e comentaristas anteriores (simples)
+            // Notificar criador e quem já comentou; atualizar contador agregado por gincana
             try {
-                $gincana = Gincana::with(['participantes' => function($q){ $q->select('users.id'); }])->find($comentario->gincana_id);
+                $gincana = Gincana::find($comentario->gincana_id);
                 if ($gincana) {
-                    // IDs de usuários que participaram ou comentaram antes
+                    $criadorId = $gincana->user_id;
+                    // quem comentou antes nesta gincana (exclui o comentário atual e o autor atual)
                     $comentouAntesIds = Comentario::where('gincana_id', $gincana->id)
                         ->where('id', '!=', $comentario->id)
                         ->pluck('user_id')
-                        ->unique();
-                    $participanteIds = $gincana->participantes->pluck('id');
-                    $targets = $participanteIds->merge($comentouAntesIds)->unique()->filter(fn($id) => (int)$id !== (int)$userId);
+                        ->unique()
+                        ->filter(fn($id) => (int)$id !== (int)$userId);
+
+                    // Regra: criador sempre recebe (mesmo que não tenha comentado)
+                    $targets = collect();
+                    if ($criadorId && (int)$criadorId !== (int)$userId) {
+                        $targets->push($criadorId);
+                    }
+                    $targets = $targets->merge($comentouAntesIds)->unique();
+
                     if ($targets->isNotEmpty()) {
                         $notificaveis = \App\Models\User::whereIn('id', $targets)->get();
+                        // Enviar push leve e atualizar contador agregado
                         foreach ($notificaveis as $u) {
+                            // Push/WebPush sem poluir lista com 1 item por comentário
                             $u->notify(new NewCommentNotification($comentario));
+
+                            // Atualização do contador agregado
+                            \App\Models\GincanaCommentNotification::query()
+                                ->updateOrCreate(
+                                    ['user_id' => $u->id, 'gincana_id' => $gincana->id],
+                                    [
+                                        'last_comentario_id' => $comentario->id,
+                                        'last_author_name' => $comentario->user?->name,
+                                        'last_preview' => \Illuminate\Support\Str::limit($comentario->conteudo, 80),
+                                    ]
+                                );
+                            // incrementar sem condições de corrida relevantes (operação simples)
+                            \DB::table('gincana_comment_notifications')
+                                ->where('user_id', $u->id)
+                                ->where('gincana_id', $gincana->id)
+                                ->increment('unread_count');
                         }
                     }
                 }
             } catch (\Exception $notifyEx) {
-                Log::warning('Falha ao enviar notificações push: ' . $notifyEx->getMessage());
+                Log::warning('Falha ao enviar notificações de comentário: ' . $notifyEx->getMessage());
             }
 
             return response()->json([

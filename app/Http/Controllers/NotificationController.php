@@ -10,31 +10,43 @@ class NotificationController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $unread = $user->unreadNotifications()->latest()->limit(20)->get();
-        return response()->json([
-            'unread_count' => $unread->count(),
-            'notifications' => $unread->map(function($n){
+        // Lista agregada por gincana
+        $items = \App\Models\GincanaCommentNotification::with('gincana:id,nome')
+            ->where('user_id', $user->id)
+            ->where('unread_count', '>', 0)
+            ->orderByDesc('updated_at')
+            ->get()
+            ->map(function($n){
                 return [
-                    'id' => $n->id,
-                    'type' => $n->data['type'] ?? null,
-                    'gincana_id' => $n->data['gincana_id'] ?? null,
-                    'gincana_nome' => $n->data['gincana_nome'] ?? null,
-                    'autor' => $n->data['autor'] ?? null,
-                    'conteudo' => $n->data['conteudo'] ?? null,
-                    'created_at' => $n->created_at->toDateTimeString(),
+                    'gincana_id' => $n->gincana_id,
+                    'gincana_nome' => $n->gincana?->nome,
+                    'unread_count' => (int)$n->unread_count,
+                    'last_preview' => $n->last_preview,
+                    'last_author_name' => $n->last_author_name,
+                    'updated_at' => $n->updated_at->toDateTimeString(),
                 ];
-            })
+            });
+
+        return response()->json([
+            'unread_groups' => $items->count(), // sino = número de gincanas com novidades
+            'gincanas' => $items,
         ]);
     }
 
     public function markRead(Request $request)
     {
-        $request->validate(['id' => 'nullable|string']);
+        // Marca como lido de forma agregada por gincana (zera o contador)
+        $request->validate([
+            'gincana_id' => 'nullable|integer'
+        ]);
         $user = Auth::user();
-        if($request->id){
-            $user->unreadNotifications()->where('id',$request->id)->update(['read_at' => now()]);
+        if ($request->filled('gincana_id')) {
+            \App\Models\GincanaCommentNotification::where('user_id', $user->id)
+                ->where('gincana_id', $request->integer('gincana_id'))
+                ->update(['unread_count' => 0]);
         } else {
-            $user->unreadNotifications()->update(['read_at' => now()]);
+            \App\Models\GincanaCommentNotification::where('user_id', $user->id)
+                ->update(['unread_count' => 0]);
         }
         return response()->json(['success' => true]);
     }

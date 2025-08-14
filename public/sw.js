@@ -1,4 +1,4 @@
-const VERSION = 'v2025-08-13-1';
+const VERSION = 'v2025-08-14-1';
 
 self.addEventListener('install', event => {
   // Força a ativação imediata do SW atualizado
@@ -24,7 +24,13 @@ self.addEventListener('push', event => {
     icon: '/favicon.ico',
     data: data.data || {}
   };
-  event.waitUntil(self.registration.showNotification(title, options));
+  event.waitUntil(Promise.all([
+    self.registration.showNotification(title, options),
+    // avisa todas as abas para recarregar contadores
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      list.forEach(c => c.postMessage({ type: 'NOTIFICATIONS_UPDATED' }));
+    })
+  ]));
 });
 
 self.addEventListener('notificationclick', event => {

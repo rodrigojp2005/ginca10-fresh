@@ -227,43 +227,46 @@
         function hide(el){ if(el && !el.classList.contains('hidden')) el.classList.add('hidden'); }
         function toggle(el){ el.classList.toggle('hidden'); }
 
-        async function fetchNotifs(){
+                async function fetchNotifs(){
             if(!window.LaravelIsAuthenticated) return;
             try {
                 const r = await fetch('/notifications');
                 if(!r.ok) return;
                 const data = await r.json();
-                // data esperado: { unread_count, notifications: [...] }
-                const notifs = data.notifications || [];
-                const unread = data.unread_count || 0;
-                if(unread>0){
-                    notifBadge.textContent = unread>99?'99+':unread;
+                                // novo formato: { unread_groups, gincanas: [...] }
+                                const groups = data.gincanas || [];
+                                const unreadGroups = data.unread_groups || 0;
+                                if(unreadGroups>0){
+                                        notifBadge.textContent = unreadGroups>99?'99+':unreadGroups;
                     notifBadge.classList.remove('hidden');
                 } else {
                     notifBadge.classList.add('hidden');
                 }
                 notifList.innerHTML = '';
-                if(notifs.length===0){
+                                if(groups.length===0){
                     notifList.innerHTML = '<li class="p-3 text-center text-xs text-gray-400">Sem notificações</li>';
                 } else {
-                    notifs.forEach(n => {
+                                        groups.forEach(n => {
                         const li = document.createElement('li');
-                        li.className = 'p-3 hover:bg-gray-50 cursor-pointer notif-item';
-                        li.dataset.id = n.id;
-                        li.innerHTML = `<div class='text-xs text-gray-400 mb-0.5'>${(new Date(n.created_at)).toLocaleTimeString()}</div>
-                                        <div class='font-medium text-gray-800 mb-0.5'>${n.autor||'Alguém'} comentou</div>
-                                        <div class='text-gray-600 text-sm'>${(n.conteudo||'').substring(0,120)}</div>
-                                        <div class='text-xs text-gray-400 mt-1'>${n.gincana_nome?('Gincana: '+n.gincana_nome):''}</div>`;
-                        li.addEventListener('click', async () => {
-                            if(n.id){
-                                await fetch('/notifications/read', {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}, body: JSON.stringify({id:n.id})});
-                            }
-                            if(n.gincana_id){
-                                window.location.href = '/gincana/' + n.gincana_id +'/jogar'; // redireciona para a gincana
-                                return;
-                            }
-                            fetchNotifs();
-                        });
+                                                li.className = 'p-3 hover:bg-gray-50 cursor-pointer flex items-start justify-between gap-2';
+                                                const countBadge = n.unread_count>0 ? `<span class="ml-2 inline-flex items-center justify-center min-w-[20px] h-[20px] px-1 rounded-full bg-red-600 text-white text-[11px] font-bold">${n.unread_count>99?'99+':n.unread_count}</span>` : '';
+                                                li.innerHTML = `
+                                                    <div>
+                                                        <div class='font-medium text-gray-800 mb-0.5'>${n.gincana_nome||('Gincana #' + n.gincana_id)}</div>
+                                                        <div class='text-gray-600 text-sm'>${(n.last_author_name||'Alguém')}: ${(n.last_preview||'').substring(0,120)}</div>
+                                                        <div class='text-xs text-gray-400 mt-1'>Atualizado: ${(n.updated_at? new Date(n.updated_at).toLocaleString() : '')}</div>
+                                                    </div>
+                                                    <div class='flex items-center'>${countBadge}</div>`;
+                                                li.addEventListener('click', async () => {
+                                                        if(n.gincana_id){
+                                                                // zera só essa gincana e navega
+                                                                try {
+                                                                    await fetch('/notifications/read', {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}, body: JSON.stringify({gincana_id:n.gincana_id})});
+                                                                } catch(e){}
+                                                                window.location.href = '/gincana/' + n.gincana_id;
+                                                                return;
+                                                        }
+                                                });
                         notifList.appendChild(li);
                     });
                 }
@@ -293,10 +296,17 @@
             }
         });
 
-        if(window.LaravelIsAuthenticated){
+                if(window.LaravelIsAuthenticated){
             fetchNotifs();
             setInterval(fetchNotifs, 15000);
             document.addEventListener('visibilitychange', () => { if(!document.hidden) fetchNotifs(); });
+                        if (navigator.serviceWorker && navigator.serviceWorker.addEventListener) {
+                            navigator.serviceWorker.addEventListener('message', (event) => {
+                                if(event?.data?.type === 'NOTIFICATIONS_UPDATED') {
+                                    fetchNotifs();
+                                }
+                            });
+                        }
         }
 
         function openMobileMenu(){ mobileMenu?.classList.remove('hidden'); setTimeout(()=> mobileMenuPanel?.classList.remove('translate-x-full'), 10); }
