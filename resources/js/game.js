@@ -13,25 +13,22 @@ const defaultLocations = [
 
 window.initGame = function() {
     // Usar locais do backend ou locais padrão
+    // A variável window.gameLocations é definida no welcome.blade.php
     locations = window.gameLocations && window.gameLocations.length > 0 
                 ? window.gameLocations 
                 : defaultLocations;
     
-    console.log('Locais carregados:', locations);
+    console.log('Gincaneiros.js: Locais carregados para o jogo:', locations);
     
     // Verificar se é a primeira visita (ou forçar tutorial)
     const showTutorial = !localStorage.getItem('gincaneiros_tutorial_seen') || window.location.search.includes('tutorial=1');
     
     if (showTutorial) {
-        // Marcar tutorial como visto
         localStorage.setItem('gincaneiros_tutorial_seen', 'true');
-        
-        // Mostrar tutorial explicativo primeiro
         showGameTutorial().then(() => {
             initializeGameComponents();
         });
     } else {
-        // Ir direto para o jogo
         initializeGameComponents();
     }
 }
@@ -56,8 +53,7 @@ function initializeMap() {
         rotateControl: false,
         scaleControl: false,
         panControl: false,
-        navigationControl: false,
-        gestureHandling: 'greedy' // Permite mover com um dedo só no mobile
+        gestureHandling: 'greedy'
     });
     map.addListener('click', function(event) {
         if (gameActive) {
@@ -73,25 +69,20 @@ function initializeMap() {
                 map: map,
                 title: 'Seu palpite',
                 icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
-            });
-            
-            // Atualizar interface quando há palpite
+            } );
             updateMapInterface(true);
         }
     });
 }
 
 function initializeStreetView() {
-    // Obter uma posição aleatória dos locais disponíveis
-    // Defina a posição da câmera e do personagem
-    const cameraOffset = 0.00025; // ~50 metros ao sul
+    const cameraOffset = 0.00025;
     let characterPosition = getRandomValidLocation();
     let cameraPosition = {
         lat: characterPosition.lat - cameraOffset,
         lng: characterPosition.lng
     };
 
-    // Função para calcular heading para olhar para o personagem
     function calculateHeading(from, to) {
         const dLng = to.lng - from.lng;
         const dLat = to.lat - from.lat;
@@ -105,29 +96,24 @@ function initializeStreetView() {
         document.getElementById('streetview'),
         {
             position: cameraPosition,
-            pov: { 
-                heading: heading,
-                pitch: 0
-            },
+            pov: { heading: heading, pitch: 0 },
             zoom: 1,
             disableDefaultUI: true,
             showRoadLabels: false,
-            motionTracking: false // Impede navegação livre
+            motionTracking: false
         }
     );
     
-    // Remove o marcador anterior se existir
     if (window.characterMarker) {
         window.characterMarker.setMap(null);
     }
 
-    // Adiciona a figurinha como marcador no panorama (igual ao exemplo)
     window.characterMarker = new google.maps.Marker({
         position: characterPosition,
         map: streetView,
         icon: {
             url: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTRweGJoMHk1eG5nb2tyOHMyMHp1ZGlpYTFoZDZ6Ym9zZ3ZkYXB2MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/bvQHYGOF8UOXqXSFir/giphy.gif",
-            scaledSize: new google.maps.Size(60, 80),
+            scaledSize: new google.maps.Size(60, 80 ),
             anchor: new google.maps.Point(30, 80)
         },
         visible: true
@@ -137,15 +123,11 @@ function initializeStreetView() {
         showPostModal(currentLocation);
     });
     
-    // Adicionar listener para detectar erros de Street View
     streetView.addListener('status_changed', function() {
         if (streetView.getStatus() !== 'OK') {
-            console.warn('Street View não disponível para esta localização, tentando outra...');
-            // Tentar uma localização alternativa
+            console.warn('Street View não disponível, tentando outra localização...');
             const newPosition = getRandomValidLocation();
             streetView.setPosition(newPosition);
-            
-            // Atualizar posição da figurinha também
             if (window.characterMarker) {
                 window.characterMarker.setPosition(newPosition);
             }
@@ -153,108 +135,66 @@ function initializeStreetView() {
     });
 }
 
-// Função para obter uma localização válida aleatória
 function getRandomValidLocation() {
     let validLocations = [];
-    
     if (locations && locations.length > 0) {
-        // Filtrar apenas locais válidos (não o marcador no_gincana)
         validLocations = locations.filter(loc => !loc.no_gincana);
     }
-    
-    // Se não há locais válidos, usar os padrões
     if (validLocations.length === 0) {
         validLocations = defaultLocations;
     }
-    
     const randomLocation = validLocations[Math.floor(Math.random() * validLocations.length)];
-    console.log('Localização selecionada:', randomLocation.name || 'Local aleatório');
-    
-    return {
-        lat: randomLocation.lat,
-        lng: randomLocation.lng
-    };
+    console.log('Gincaneiros.js: Localização selecionada:', randomLocation.name || 'Local aleatório');
+    return { lat: randomLocation.lat, lng: randomLocation.lng };
 }
 
 function setupEventListeners() {
     document.getElementById('showMapBtn').addEventListener('click', showMap);
     document.getElementById('closeMapBtn').addEventListener('click', hideMap);
-    
-    // Adicionar listener apenas se o botão existir
-    const cancelBtn = document.getElementById('cancelGuessBtn');
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', hideMap);
-    }
-    
     document.getElementById('confirmGuessBtn').addEventListener('click', confirmGuess);
     document.getElementById('continueBtn').addEventListener('click', hidePopup);
     document.getElementById('overlay').addEventListener('click', hidePopup);
 }
 
 function startNewRound() {
-    // Selecionar um local aleatório dos locais disponíveis
     if (locations.length === 0) {
         console.error('Nenhum local disponível para o jogo');
         return;
     }
-    
     currentLocation = locations[Math.floor(Math.random() * locations.length)];
-    console.log('Local atual:', currentLocation);
+    console.log('Gincaneiros.js: Local atual da rodada:', currentLocation);
     
-    // Adicionar delay para evitar muitas requisições seguidas
     setTimeout(() => {
-        // Defina a posição da câmera e do personagem
-        const cameraOffset = 0.00025; // ~50 metros ao sul
-        let characterPosition = {
-            lat: currentLocation.lat,
-            lng: currentLocation.lng
-        };
-        let cameraPosition = {
-            lat: characterPosition.lat - cameraOffset,
-            lng: characterPosition.lng
-        };
+        const cameraOffset = 0.00025;
+        let characterPosition = { lat: currentLocation.lat, lng: currentLocation.lng };
+        let cameraPosition = { lat: characterPosition.lat - cameraOffset, lng: characterPosition.lng };
 
-        // Função para calcular heading para olhar para o personagem
         function calculateHeading(from, to) {
             const dLng = to.lng - from.lng;
             const dLat = to.lat - from.lat;
             const angle = Math.atan2(dLng, dLat) * 180 / Math.PI;
             return (angle + 360) % 360;
         }
-
         const heading = calculateHeading(cameraPosition, characterPosition);
-
         streetView.setPosition(cameraPosition);
         streetView.setPov({ heading: heading, pitch: 0 });
-
-        // Atualizar posição da figurinha também
         if (window.characterMarker) {
             window.characterMarker.setPosition(characterPosition);
         }
-    }, 500); // Delay de 500ms
+    }, 500);
     
-    if (window.userMarker) {
-        window.userMarker.setMap(null);
-    }
-    if (window.correctMarker) {
-        window.correctMarker.setMap(null);
-    }
+    if (window.userMarker) window.userMarker.setMap(null);
+    if (window.correctMarker) window.correctMarker.setMap(null);
     userGuess = null;
     gameActive = true;
     updateUI();
-    
-    // Reset interface do mapa
     updateMapInterface(false);
 }
 
 function updateMapInterface(hasGuess) {
     const confirmBtn = document.getElementById('confirmGuessBtn');
     const instructions = document.getElementById('mapInstructions');
-    
-    // Verificar se os elementos existem antes de tentar manipulá-los
-    if (!confirmBtn || !instructions) {
-        return;
-    }
+    if (!confirmBtn || !instructions) return;
     
     if (hasGuess) {
         confirmBtn.disabled = false;
@@ -271,7 +211,6 @@ function updateMapInterface(hasGuess) {
 
 function showMap() {
     document.getElementById('mapSlider').classList.add('active');
-    // Reset interface state
     updateMapInterface(!!userGuess);
 }
 
@@ -279,17 +218,9 @@ function hideMap() {
     document.getElementById('mapSlider').classList.remove('active');
 }
 
-function closeMapSlider() {
-    document.getElementById('mapSlider').classList.remove('active');
-}
 function confirmGuess() {
     if (!userGuess) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Atenção!',
-            text: 'Por favor, clique no mapa para fazer seu palpite!',
-            confirmButtonColor: '#007bff'
-        });
+        Swal.fire({ icon: 'warning', title: 'Atenção!', text: 'Por favor, clique no mapa para fazer seu palpite!', confirmButtonColor: '#007bff' });
         return;
     }
     
@@ -304,23 +235,11 @@ function confirmGuess() {
         icon = 'success';
         message += `\n\nVocê acertou! A localização era: ${currentLocation.name}`;
         message += `\n\nPontuação final: ${score} pontos`;
-        
-        // Salvar pontuação no banco de dados
         saveScoreToDatabase(score, currentLocation);
-        
         endRound(true);
-        
-        // Mostrar SweetAlert com botão "Novo Jogo" e reload da página
-        Swal.fire({
-            icon: icon,
-            title: title,
-            text: message,
-            confirmButtonText: 'Novo Jogo',
-            confirmButtonColor: '#007bff',
-            allowOutsideClick: false
-        }).then((result) => {
+        Swal.fire({ icon: icon, title: title, text: message, confirmButtonText: 'Novo Jogo', confirmButtonColor: '#007bff', allowOutsideClick: false }).then((result) => {
             if (result.isConfirmed) {
-                closeMapSlider();
+                hideMap();
                 location.reload();
             }
         });
@@ -331,158 +250,94 @@ function confirmGuess() {
             const direction = getDirection(currentLocation, userGuess);
             let directionImg = '';
             switch (direction) {
-                case 'Norte':
-                    directionImg = 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGt2MXQzdmY3eHFrYzNkcjNmcnhhbWl5emlzYjNibnR5ZmEwc2locyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/7aFMOMlY5HgQnCcK5n/giphy.gif'; // seta norte
-                    break;
-                case 'Sul':
-                    directionImg = 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeWwxbW12a2ExZTByd2x4aGxxdjhrbjJxdmJhZDJkZ2x3aW12czY2aiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/jfxNsKqJLIc3Kw1nZz/giphy.gif'; // seta sul
-                    break;
-                case 'Leste':
-                    directionImg = 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmlwZXAydHE4cmszOHlpdDBudnd4OTd6cW4ybjhrODVzMW5tMGQxZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/A0Mmm3WcsQVrMlYjlY/giphy.gif'; // seta leste
-                    break;
-                case 'Oeste':
-                    directionImg = 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeWd5aW5nbnpreWNlcXh6MHk1aDVtMWJkdTJoOW15bm1ycHcwb2swciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/CGTFfpxHMpxCJk1eGR/giphy.gif'; // seta oeste
-                    break;
+                case 'Norte': directionImg = 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGt2MXQzdmY3eHFrYzNkcjNmcnhhbWl5emlzYjNibnR5ZmEwc2locyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/7aFMOMlY5HgQnCcK5n/giphy.gif'; break;
+                case 'Sul': directionImg = 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeWwxbW12a2ExZTByd2x4aGxxdjhrbjJxdmJhZDJkZ2x3aW12czY2aiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/jfxNsKqJLIc3Kw1nZz/giphy.gif'; break;
+                case 'Leste': directionImg = 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmlwZXAydHE4cmszOHlpdDBudnd4OTd6cW4ybjhrODVzMW5tMGQxZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/A0Mmm3WcsQVrMlYjlY/giphy.gif'; break;
+                case 'Oeste': directionImg = 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeWd5aW5nbnpreWNlcXh6MHk1aDVtMWJkdTJoOW15bm1ycHcwb2swciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/CGTFfpxHMpxCJk1eGR/giphy.gif'; break;
             }
             message += `\n\n vá mais para o ${direction}.`;
-            message += `\n\n Falta(m) ${attempts} tentativa(s).`;
+            message += `\n\n Falta(m ) ${attempts} tentativa(s).`;
             message += `\n\n Pontuação atual: ${score} pts.`;
-            Swal.fire({
-                title: title,
-                text: message.replace(/\n/g, ' '),
-                imageUrl: directionImg,
-                imageWidth: 150,
-                imageHeight: 150,
-                imageAlt: direction,
-                confirmButtonColor: '#007bff',
-                confirmButtonText: 'Continuar',
-                allowOutsideClick: false
-            });
+            Swal.fire({ title: title, text: message.replace(/\n/g, ' '), imageUrl: directionImg, imageWidth: 150, imageHeight: 150, imageAlt: direction, confirmButtonColor: '#007bff', confirmButtonText: 'Continuar', allowOutsideClick: false });
         } else {
             title = 'Fim de Jogo';
             message += `\n\nSuas tentativas acabaram!`;
             message += `\n\nA localização era: ${currentLocation.name}`;
             message += `\n\nPontuação final: ${score} pontos`;
-            
-            // Salvar pontuação no banco de dados
             saveScoreToDatabase(score, currentLocation);
-            
             endRound(false);
-            
-            // Mostrar SweetAlert com botão "Novo Jogo" e reload da página
-            Swal.fire({
-                icon: icon,
-                title: title,
-                text: message,
-                confirmButtonText: 'Novo Jogo',
-                confirmButtonColor: '#007bff',
-                allowOutsideClick: false
-            }).then((result) => {
+            Swal.fire({ icon: icon, title: title, text: message, confirmButtonText: 'Novo Jogo', confirmButtonColor: '#007bff', allowOutsideClick: false }).then((result) => {
                 if (result.isConfirmed) {
-                    closeMapSlider();
+                    hideMap();
                     location.reload();
                 }
             });
         }
     }
-    
     updateUI();
 }
+
 function calculateDistance(pos1, pos2) {
     const R = 6371;
     const dLat = (pos2.lat - pos1.lat) * Math.PI / 180;
     const dLng = (pos2.lng - pos1.lng) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-             Math.cos(pos1.lat * Math.PI / 180) * Math.cos(pos2.lat * Math.PI / 180) *
-             Math.sin(dLng/2) * Math.sin(dLng/2);
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(pos1.lat * Math.PI / 180) * Math.cos(pos2.lat * Math.PI / 180) * Math.sin(dLng/2) * Math.sin(dLng/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     return R * c;
 }
+
 function getDirection(target, guess) {
     const dLat = target.lat - guess.lat;
     const dLng = target.lng - guess.lng;
-    if (Math.abs(dLat) > Math.abs(dLng)) {
-        return dLat > 0 ? 'Norte' : 'Sul';
-    } else {
-        return dLng > 0 ? 'Leste' : 'Oeste';
-    }
-}
-function endRound(won) {
-    gameActive = false;
-    window.correctMarker = new google.maps.Marker({
-        position: currentLocation,
-        map: map,
-        title: 'Localização correta',
-        icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-    });
-}
-function newGame() {
-    score = 1000;
-    attempts = 5;
-    round++;
-    gameActive = true;
-    hidePopup();
-    startNewRound();
-}
-window.showHelpMessage = function() {
-    const messages = [
-        "Ajude-me a encontrar onde estou no mapa! 🗺️",
-        "Estou perdido! Você pode me ajudar a descobrir minha localização? 🤔",
-        "Olhe ao redor e tente descobrir onde estou! 🔍",
-        "Use as pistas visuais para me encontrar no mapa! 👀",
-        "Preciso da sua ajuda para descobrir onde estou! 🆘"
-    ];
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    Swal.fire({
-        icon: 'question',
-        title: 'Preciso de Ajuda! 🤔',
-        text: randomMessage,
-        confirmButtonText: 'Vou te ajudar!',
-        confirmButtonColor: '#28a745',
-        background: '#fff',
-        iconColor: '#ffc107'
-    });
-}
-function hidePopup() {
-    console.log('hidePopup chamada');
-}
-function updateUI() {
-    document.getElementById('score').textContent = score;
-    document.getElementById('attempts').textContent = attempts;
-    document.getElementById('round').textContent = round;
+    return Math.abs(dLat) > Math.abs(dLng) ? (dLat > 0 ? 'Norte' : 'Sul') : (dLng > 0 ? 'Leste' : 'Oeste');
 }
 
-window.addEventListener("load", () => {
-    // Verificar primeiro se há gincanas disponíveis
-    const gameLocations = window.gameLocations || [];
-    
-    if (gameLocations.length === 1 && gameLocations[0].no_gincana) {
-        // Se não há gincanas, mostrar alerta diretamente
+function endRound(won) {
+    gameActive = false;
+    window.correctMarker = new google.maps.Marker({ position: currentLocation, map: map, title: 'Localização correta', icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png' } );
+}
+
+function updateUI() {
+    // Apenas atualiza se os elementos existirem (para não dar erro para visitantes)
+    if (document.getElementById('score')) document.getElementById('score').textContent = score;
+    if (document.getElementById('attempts')) document.getElementById('attempts').textContent = attempts;
+    if (document.getElementById('round')) document.getElementById('round').textContent = round;
+}
+
+function hidePopup() { console.log('hidePopup chamada'); }
+
+// ########## INÍCIO DA CORREÇÃO ##########
+
+// Listener de evento que espera a estrutura da página (DOM) estar pronta.
+// Isso garante que a tag <script> no welcome.blade.php já definiu window.gameLocations.
+document.addEventListener('DOMContentLoaded', () => {
+    // Verificar se a variável global com os locais foi definida pelo Laravel.
+    if (typeof window.gameLocations === 'undefined') {
+        console.error('Gincaneiros.js: A variável window.gameLocations não foi encontrada. Verifique o welcome.blade.php');
+        return; // Interrompe a execução se os dados não estiverem disponíveis.
+    }
+
+    // Verificar se há gincanas disponíveis
+    if (window.gameLocations.length === 1 && window.gameLocations[0].no_gincana) {
         showNoGincanaAlert();
         return;
     }
     
-    // Se há gincanas, aguardar carregamento do Google Maps
-    const waitForGoogle = setInterval(() => {
-        if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
-            clearInterval(waitForGoogle);
-            
-            // Adicionar tratamento de erro global para Google Maps
-            window.gm_authFailure = function() {
-                console.error('Falha na autenticação da Google Maps API');
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro na API do Google Maps',
-                    text: 'Problema de autenticação ou limite de requisições. Tente novamente em alguns minutos.',
-                    confirmButtonColor: '#d33'
-                });
-            };
-            
-            initGame();
-        }
-    }, 100);
+    // Agora que temos os dados, esperamos a API do Google Maps carregar.
+    // A API é carregada por uma tag <script> no layouts/app.blade.php.
+    // A função initGame() agora é chamada globalmente pelo callback da API do Google.
+    // Não precisamos mais do setInterval. A função initGame se torna o ponto de entrada.
 });
 
+// A função initGame já existe e é chamada pelo callback da API do Google Maps.
+// O importante é que o script da API do Google seja carregado em todas as páginas.
+// Verifique se a linha abaixo está no seu layouts/app.blade.php, fora de qualquer condicional.
+// <script async src="https://maps.googleapis.com/maps/api/js?key=SUA_CHAVE_API&callback=initGame"></script>
+
+// (O restante do seu código, como saveScoreToDatabase, showNoGincanaAlert, etc., permanece igual )
+// ... (código omitido para brevidade) ...
+
+// ########## FIM DA CORREÇÃO ##########
 // Função para salvar pontuação no banco de dados
 async function saveScoreToDatabase(pontuacao, location) {
     try {
