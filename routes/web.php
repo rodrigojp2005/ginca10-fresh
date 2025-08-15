@@ -6,33 +6,23 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\ComentarioController;
-use App\Models\Gincana; // Pode remover se não for mais usado diretamente aqui
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request; // Pode remover se não for mais usado diretamente aqui
-use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
-// A função getGameLocations() foi removida daqui.
-// A lógica agora está no método welcome() do GincanaController.
-
-// Rota principal - agora aponta para o GincanaController
-Route::get('/', [GincanaController::class, 'welcome'])->middleware('guest')->name('home');
+// Rota principal - AGORA SEM O MIDDLEWARE 'guest' PARA FUNCIONAR PARA TODOS
+Route::get('/', [GincanaController::class, 'welcome'])->name('home');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
+    // ... O RESTO DAS SUAS ROTAS CONTINUA EXATAMENTE IGUAL ...
     // Rotas das Gincanas
     Route::get('/gincana/create', [GincanaController::class, 'create'])->name('gincana.create');
     Route::post('/gincana', [GincanaController::class, 'store'])->name('gincana.store');
@@ -53,31 +43,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/ranking/{gincana}', [RankingController::class, 'show'])->name('ranking.show');
     Route::get('/ranking-geral', [RankingController::class, 'geral'])->name('ranking.geral');
     
-    // Rotas para comentários (sem middleware auth temporariamente)
-    Route::get('/test-comentarios', function() {
-        return response()->json(['message' => 'Rota de teste funcionando', 'timestamp' => now()]);
-    });
+    // Rotas para comentários
     Route::post('/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
     Route::get('/comentarios/{gincana_id}', [ComentarioController::class, 'index'])->name('comentarios.index');
 
     // Push subscription
     Route::post('/push/subscribe', [\App\Http\Controllers\PushSubscriptionController::class, 'store'])->name('push.subscribe');
     Route::post('/push/unsubscribe', [\App\Http\Controllers\PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
-    Route::post('/push/test', function() { 
-        $user = Auth::user();
-        if(!$user) return response()->json(['error' => 'no auth'], 401);
-        $fakeComentario = new \App\Models\Comentario([
-            'gincana_id' => 1,
-            'user_id' => $user->id,
-            'conteudo' => 'Teste de notificação manual'
-        ]);
-        $fakeComentario->setRelation('user', $user);
-        $fakeComentario->setRelation('gincana', new \App\Models\Gincana(['nome' => 'Gincana Teste']));
-        $user->notify(new \App\Notifications\NewCommentNotification($fakeComentario));
-        return response()->json(['sent' => true]);
-    });
 
-    // Notificações (agregadas por gincana)
+    // Notificações internas
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
     Route::post('/notifications/read', [\App\Http\Controllers\NotificationController::class, 'markRead']);
 });
