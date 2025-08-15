@@ -80,18 +80,6 @@ Route::middleware('auth')->group(function () {
     // Notificações (agregadas por gincana)
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
     Route::post('/notifications/read', [\App\Http\Controllers\NotificationController::class, 'markRead']);
-
-    // DEBUG TEMPORÁRIO: verificar se a chave do Google Maps está disponível no servidor (valores mascarados)
-    Route::get('/debug/maps-key', function () {
-        $mask = function($v){ if(!$v) return null; $len = strlen($v); if($len<=8) return str_repeat('*', $len); return substr($v,0,4).str_repeat('*', max(0,$len-8)).substr($v,-4); };
-        return response()->json([
-            'config_services_google_maps_api_key' => $mask(config('services.google.maps_api_key')),
-            'env_GOOGLE_MAPS_API_KEY' => $mask(env('GOOGLE_MAPS_API_KEY')),
-            'env_VITE_GOOGLE_MAPS_API_KEY' => $mask(env('VITE_GOOGLE_MAPS_API_KEY')),
-            'app_env' => app()->environment(),
-            'php_version' => PHP_VERSION,
-        ]);
-    });
 });
 
 // Rotas do Google OAuth
