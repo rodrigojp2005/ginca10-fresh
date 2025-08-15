@@ -165,5 +165,5 @@
         });
     }
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_api_key') ?: env('GOOGLE_MAPS_API_KEY') ?: env('VITE_GOOGLE_MAPS_API_KEY') }}&callback=initMap&libraries=geometry"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzEzusC_k3oEoPnqynq2N4a0aA3arzH-c&callback=initMap&libraries=geometry"></script>
 @endsection
