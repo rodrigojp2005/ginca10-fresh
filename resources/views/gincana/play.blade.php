@@ -8,6 +8,10 @@
     @endauth
 @endsection
 
+@section('scripts')
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_api_key') }}&libraries=geometry&callback=initGame"></script>
+@endsection
+
 @section('content')
 <div class="game-container">
     <!-- Informações do jogo -->
