@@ -84,6 +84,6 @@
     }
     window.initMapShow = initMapShow;
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&callback=initMapShow&libraries=geometry"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_api_key') }}&callback=initMapShow&libraries=geometry"></script>
 </div>
 @endsection
